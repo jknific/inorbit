@@ -11,13 +11,13 @@ export const metadata: Metadata = {
   creator: 'John Knific',
   publisher: 'Knerd Creative LLC',
   openGraph: {
-    title: 'In Orbit - John Knific | Acoustic-Electronic Music Fusion',
+    title: 'In Orbit - John Knific | Blending Acoustic and Electronic',
     description: 'A 4-track EP blending jazz piano with electronic production. Stream on Spotify, Apple Music, and more.',
     type: 'music.album',
     siteName: 'In Orbit - John Knific',
     images: [
       {
-        url: '/images/In Orbit - Final EP Album Cover.png',
+        url: '/images/album-covers/cover-text.png',
         width: 1200,
         height: 1200,
         alt: 'In Orbit EP Album Cover by John Knific',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'In Orbit - John Knific | Acoustic-Electronic Music Fusion',
+    title: 'In Orbit - John Knific | Blending Acoustic and Electronic',
     description: 'A 4-track EP blending jazz piano with electronic production. Stream now.',
-    images: ['/images/In Orbit - Final EP Album Cover.png'],
+    images: ['/images/album-covers/cover-text.png'],
   },
   robots: {
     index: true,
