@@ -274,21 +274,21 @@ export default function Home() {
     <>
     <main className={`min-h-screen bg-primary vibe-mode ${getVibeClasses()}`}>
       {fusionMode && <JazzModeBackground />}
-      <div className="container mx-auto px-4 pb-16 relative" style={{ paddingTop: '6rem', zIndex: 1 }}>
+      <div className="container mx-auto px-2 sm:px-4 pb-16 relative overflow-hidden" style={{ paddingTop: '6rem', zIndex: 1 }}>
         {/* Top Spacer */}
         <div style={{ height: '3rem' }}></div>
         
         {/* Album Title */}
         <section className="max-w-4xl mx-auto mb-2">
-          <div className="pl-8">
+          <div className="pl-2 sm:pl-4 md:pl-8">
             <h1 
-              className={`text-5xl md:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
+              className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 break-words ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle1}
             >
               {mounted ? displayedTitle1 : ''}
             </h1>
             <h2 
-              className={`text-5xl md:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-2 ${isTyping2 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
+              className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-2 break-words ${isTyping2 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle2}
             >
               {mounted ? displayedTitle2 : ''}
@@ -302,7 +302,7 @@ export default function Home() {
             {/* Hero Section */}
             <section className="mb-24 animate-fade-in">
           <div className="max-w-4xl mx-auto">
-            <div className="pl-8">
+            <div className="pl-2 sm:pl-4 md:pl-8">
               <p className="text-xl md:text-2xl leading-relaxed mb-12 text-secondary">
                 BLENDING ACOUSTIC AND ELECTRONIC MUSIC
               </p>
