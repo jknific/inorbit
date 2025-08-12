@@ -39,6 +39,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
   const rotationRef = useRef(0)
   const positionRef = useRef<Position>({ x: 0, y: 0 })
   const [isGrabbing, setIsGrabbing] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [isEjected, setIsEjected] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -59,6 +60,18 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       }
     }
   }, [externalIsEjected, isEjected])
+
+  // Detect mobile viewport for sizing
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    
+    checkMobile() // Initial check
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Maintain disk position when fusion mode changes
   useEffect(() => {
@@ -309,15 +322,17 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
 
     // Add touch support
     const handleTouchStart = (e: TouchEvent) => {
-      // Prevent scrolling when touching the VHS
-      e.preventDefault()
+      // Only prevent scrolling when the VHS is ejected/floating
+      if (isEjected) {
+        e.preventDefault()
+      }
       const touch = e.touches[0]
       handleMouseDown(touch as unknown as MouseEvent)
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      // Prevent scrolling when dragging the VHS
-      if (isDraggingRef.current) {
+      // Only prevent scrolling when dragging the ejected VHS
+      if (isDraggingRef.current && isEjected) {
         e.preventDefault()
       }
       const touch = e.touches[0]
@@ -325,8 +340,8 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
     }
 
     const handleTouchEnd = (e: TouchEvent) => {
-      // Prevent scrolling issues on touch end
-      if (isDraggingRef.current) {
+      // Only prevent scrolling issues on touch end when VHS was ejected
+      if (isDraggingRef.current && isEjected) {
         e.preventDefault()
       }
       const touch = e.changedTouches[0]
@@ -345,7 +360,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
           positionRef.current.y += velocityRef.current.y
           
           // Get boundaries (with some padding for the disk size)
-          const diskRadius = 150 // Approximate radius for larger VHS
+          const diskRadius = isMobile ? 100 : 150 // Smaller radius on mobile
           const minX = diskRadius
           const maxX = window.innerWidth - diskRadius
           const minY = diskRadius
@@ -560,8 +575,8 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
           ref={diskRef}
           className={`fixed z-10 ${isGrabbing ? 'cursor-grabbing' : 'cursor-grab'}`}
           style={{
-            width: '300px',
-            height: '300px',
+            width: isMobile ? '200px' : '300px', // Smaller on mobile
+            height: isMobile ? '200px' : '300px',
             transition: 'none',
             userSelect: 'none',
             pointerEvents: 'auto',
