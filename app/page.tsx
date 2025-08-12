@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import JazzModeBackground from '@/components/JazzModeBackground'
 import InteractiveFloppyDisk, { InteractiveFloppyDiskRef } from '@/components/InteractiveFloppyDisk'
+import { assetPath } from '@/lib/utils'
 
 export default function Home() {
   const [displayedTitle1, setDisplayedTitle1] = useState('')
@@ -34,14 +35,14 @@ export default function Home() {
   
   // Carousel media items from /public/images/carousel/
   const carouselMedia = [
-    { type: 'image', src: '/images/carousel/1.jpeg', alt: 'Studio moment 1' },
-    { type: 'image', src: '/images/carousel/2.jpeg', alt: 'Studio moment 2' },
-    { type: 'image', src: '/images/carousel/3.jpg', alt: 'Studio moment 3' },
-    { type: 'image', src: '/images/carousel/4.jpeg', alt: 'Studio moment 4' },
-    { type: 'video', src: '/images/carousel/5.mp4', poster: '/images/carousel/5-thumb.jpg', alt: 'Studio session 1' },
-    { type: 'video', src: '/images/carousel/6.mp4', poster: '/images/carousel/6-thumb.jpg', alt: 'Studio session 2' },
-    { type: 'video', src: '/images/carousel/7.mp4', poster: '/images/carousel/7-thumb.jpg', alt: 'Studio session 3' },
-    { type: 'image', src: '/images/carousel/8.jpeg', alt: 'Studio moment 5' },
+    { type: 'image', src: assetPath('/images/carousel/1.jpeg'), alt: 'Studio moment 1' },
+    { type: 'image', src: assetPath('/images/carousel/2.jpeg'), alt: 'Studio moment 2' },
+    { type: 'image', src: assetPath('/images/carousel/3.jpg'), alt: 'Studio moment 3' },
+    { type: 'image', src: assetPath('/images/carousel/4.jpeg'), alt: 'Studio moment 4' },
+    { type: 'video', src: assetPath('/images/carousel/5.mp4'), poster: assetPath('/images/carousel/5-thumb.jpg'), alt: 'Studio session 1' },
+    { type: 'video', src: assetPath('/images/carousel/6.mp4'), poster: assetPath('/images/carousel/6-thumb.jpg'), alt: 'Studio session 2' },
+    { type: 'video', src: assetPath('/images/carousel/7.mp4'), poster: assetPath('/images/carousel/7-thumb.jpg'), alt: 'Studio session 3' },
+    { type: 'image', src: assetPath('/images/carousel/8.jpeg'), alt: 'Studio moment 5' },
   ]
   
       const tracks = [
@@ -582,7 +583,7 @@ export default function Home() {
               <div className="relative max-w-4xl mx-auto">
                 <div className="aspect-[3/1] overflow-hidden rounded-xl bg-black/40">
                   <img 
-                    src="/images/effect-pedals-bw.jpeg"
+                    src={assetPath("/images/effect-pedals-bw.jpeg")}
                     alt="Effects pedals setup including Tensor delay and Ottobit jr. bitcrusher"
                     className="w-full h-full object-cover object-center filter grayscale hover:grayscale-0 transition-all duration-500 opacity-90 hover:opacity-100"
                     loading="lazy"
@@ -835,7 +836,7 @@ export default function Home() {
     {/* Vibe Audio - Hidden audio element for fusion mode background music */}
     <audio 
       ref={vibeAudioRef}
-      src="/audio/vibe-loop.mp3"
+      src={assetPath("/audio/vibe-loop.mp3")}
       loop
       preload="auto"
       style={{ display: 'none' }}
@@ -844,19 +845,19 @@ export default function Home() {
     {/* Sound Design Audio Elements */}
     <audio 
       ref={rawPianoRef}
-      src="/audio/piano-raw.mp3"
+      src={assetPath("/audio/piano-raw.mp3")}
       preload="metadata"
       style={{ display: 'none' }}
     />
     <audio 
       ref={processedPianoRef}
-      src="/audio/piano-processed.mp3"
+      src={assetPath("/audio/piano-processed.mp3")}
       preload="metadata"
       style={{ display: 'none' }}
     />
     <audio 
       ref={finalMixRef}
-      src="/audio/piano-track.mp3"
+      src={assetPath("/audio/piano-track.mp3")}
       preload="metadata"
       style={{ display: 'none' }}
     />

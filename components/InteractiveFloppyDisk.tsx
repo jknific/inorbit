@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+import { assetPath } from '@/lib/utils'
 
 interface Position {
   x: number
@@ -414,7 +415,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
             }}
           >
           <img 
-            src="/images/in-orbit-vhs.png" 
+            src={assetPath("/images/in-orbit-vhs.png")} 
             alt="IN_0RBIT Album on VHS" 
             className="w-full h-auto object-contain"
             style={{
@@ -560,7 +561,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
           }}
         >
           <img 
-            src="/images/in-orbit-vhs.png" 
+            src={assetPath("/images/in-orbit-vhs.png")} 
             alt="IN_0RBIT Album on VHS" 
             className="w-full h-full object-contain"
             style={{
@@ -578,25 +579,25 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       {/* Hidden Audio Elements */}
       <audio 
         ref={audioRef}
-        src="/audio/in-orbit-preview.mp3"
+        src={assetPath("/audio/in-orbit-preview.mp3")}
         preload="metadata"
         style={{ display: 'none' }}
       />
       <audio 
         ref={rewindSfxRef}
-        src="/audio/rewind.mp3"
+        src={assetPath("/audio/rewind.mp3")}
         preload="auto"
         style={{ display: 'none' }}
       />
       <audio 
         ref={pauseSfxRef}
-        src="/audio/pause.mp3"
+        src={assetPath("/audio/pause.mp3")}
         preload="auto"
         style={{ display: 'none' }}
       />
       <audio 
         ref={ejectSfxRef}
-        src="/audio/eject.mp3"
+        src={assetPath("/audio/eject.mp3")}
         preload="auto"
         style={{ display: 'none' }}
       />

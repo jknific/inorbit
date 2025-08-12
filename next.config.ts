@@ -1,9 +1,11 @@
 import type { NextConfig } from 'next'
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: '/inorbit',
-  assetPrefix: '/inorbit',
+  basePath: isProd ? '/inorbit' : '',
+  assetPrefix: isProd ? '/inorbit' : '',
   experimental: {
     optimizePackageImports: ['clsx', 'tailwind-merge']
   },
@@ -11,6 +13,14 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     domains: [],
     formats: ['image/webp', 'image/avif'],
+  },
+  webpack: (config) => {
+    // Handle font URLs in CSS
+    config.module.rules.push({
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      type: 'asset/resource',
+    })
+    return config
   },
 }
 
