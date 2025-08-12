@@ -282,13 +282,13 @@ export default function Home() {
         <section className="max-w-4xl mx-auto mb-2">
           <div className="pl-2 sm:pl-4 md:pl-8">
             <h1 
-              className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 break-words ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 break-words ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle1}
             >
               {mounted ? displayedTitle1 : ''}
             </h1>
             <h2 
-              className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-2 break-words ${isTyping2 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-2 break-words ${isTyping2 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle2}
             >
               {mounted ? displayedTitle2 : ''}

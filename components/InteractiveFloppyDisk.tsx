@@ -309,16 +309,26 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
 
     // Add touch support
     const handleTouchStart = (e: TouchEvent) => {
+      // Prevent scrolling when touching the VHS
+      e.preventDefault()
       const touch = e.touches[0]
       handleMouseDown(touch as unknown as MouseEvent)
     }
 
     const handleTouchMove = (e: TouchEvent) => {
+      // Prevent scrolling when dragging the VHS
+      if (isDraggingRef.current) {
+        e.preventDefault()
+      }
       const touch = e.touches[0]
       handleMouseMove(touch as unknown as MouseEvent)
     }
 
     const handleTouchEnd = (e: TouchEvent) => {
+      // Prevent scrolling issues on touch end
+      if (isDraggingRef.current) {
+        e.preventDefault()
+      }
       const touch = e.changedTouches[0]
       handleMouseUp(touch as unknown as MouseEvent)
     }
@@ -384,9 +394,9 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
     document.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
-    document.addEventListener('touchstart', handleTouchStart)
-    document.addEventListener('touchmove', handleTouchMove)
-    document.addEventListener('touchend', handleTouchEnd)
+    document.addEventListener('touchstart', handleTouchStart, { passive: false })
+    document.addEventListener('touchmove', handleTouchMove, { passive: false })
+    document.addEventListener('touchend', handleTouchEnd, { passive: false })
 
     return () => {
       if (animationRef.current) {
@@ -408,7 +418,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
         <div className="text-center mb-8 relative">
           <div 
             ref={staticDiskRef}
-            className="mx-auto max-w-lg md:max-w-xl relative opacity-90 hover:opacity-100 transition-all duration-500 vibe-image"
+            className="mx-auto max-w-sm sm:max-w-md md:max-w-xl relative opacity-90 hover:opacity-100 transition-all duration-500 vibe-image"
             style={{
               transform: 'rotate(-3deg)',
               transition: 'opacity 0.5s ease, transform 0.3s ease'
