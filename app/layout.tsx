@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import FontLoader from '@/components/FontLoader'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -50,6 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <FontLoader />
         {children}
       </body>
     </html>
