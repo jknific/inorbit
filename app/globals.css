@@ -1,0 +1,1212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Disket Mono';
+  src: url('/fonts/Disket-Mono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Disket Mono';
+  src: url('/fonts/Disket-Mono-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Import Google Fonts for Jazz Mode - using available system fonts with good fallbacks */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+:root {
+  --color-dark-bg: #1a1a1a;
+  --color-card-bg: #2a2a2a;
+  --color-cream: #f5f5dc;
+  --color-red: #dc3545;
+  --color-red-hover: #c82333;
+  --color-blue: #5a8cae;
+  --color-green: #28a745;
+  --color-gray: #888888;
+  
+  /* Font Family Variables for Vibe Modes */
+  --font-primary: 'Disket Mono', monospace;
+  --font-secondary: 'Disket Mono', monospace;
+  --font-display: 'Disket Mono', monospace;
+  
+  /* Jazz Mode Colors */
+  --jazz-deep-charcoal: #1a1a1a;
+  --jazz-warm-cream: #f7f3e9;
+  --jazz-rich-burgundy: #8b2635;
+  --jazz-muted-gold: #d4af37;
+  --jazz-soft-sage: #9caf88;
+  --jazz-dusty-blue: #5c7a89;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased;
+    background-color: var(--color-dark-bg);
+    color: var(--color-cream);
+    font-family: var(--font-primary);
+  }
+}
+
+@layer components {
+  .glass-effect {
+    background-color: var(--color-card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(245, 245, 220, 0.1);
+  }
+  
+  .btn-primary {
+    background-color: var(--color-red);
+    color: var(--color-cream);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    transform: scale(1);
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-red-hover);
+    transform: scale(1.05);
+  }
+  
+  .btn-secondary {
+    border: 2px solid var(--color-blue);
+    color: var(--color-cream);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    background-color: transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-blue);
+    color: var(--color-dark-bg);
+  }
+  
+  .btn-streaming {
+    border: 2px solid var(--color-green);
+    color: var(--color-cream);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-streaming:hover {
+    background-color: var(--color-green);
+    color: var(--color-dark-bg);
+    animation: glitch 0.15s ease-in-out;
+  }
+  
+  .btn-streaming:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff0000;
+    animation: glitch-text-1 0.15s ease-in-out;
+    z-index: 1;
+  }
+  
+  .btn-streaming:hover::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ffff;
+    animation: glitch-text-2 0.15s ease-in-out;
+    z-index: 1;
+  }
+  
+  .btn-streaming:active {
+    animation: glitch-intense 0.1s ease-in-out;
+  }
+  
+  .btn-streaming:active::before {
+    animation: glitch-text-intense-1 0.1s ease-in-out;
+  }
+  
+  .btn-streaming:active::after {
+    animation: glitch-text-intense-2 0.1s ease-in-out;
+  }
+  
+  .text-primary {
+    color: var(--color-cream);
+  }
+  
+  .text-secondary {
+    color: var(--color-gray);
+  }
+  
+  .text-accent-red {
+    color: var(--color-red);
+  }
+  
+  .text-accent-blue {
+    color: var(--color-blue);
+  }
+  
+  .text-accent-green {
+    color: var(--color-green);
+  }
+  
+  .bg-primary {
+    background-color: var(--color-dark-bg);
+  }
+  
+  .bg-card {
+    background-color: var(--color-card-bg);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-intense {
+  0% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+  10% {
+    transform: translate(-3px, 3px);
+    filter: hue-rotate(90deg);
+  }
+  20% {
+    transform: translate(-3px, -3px);
+    filter: hue-rotate(180deg);
+  }
+  30% {
+    transform: translate(3px, 3px);
+    filter: hue-rotate(270deg);
+  }
+  40% {
+    transform: translate(3px, -3px);
+    filter: hue-rotate(360deg);
+  }
+  50% {
+    transform: translate(-2px, 2px);
+    filter: hue-rotate(45deg);
+  }
+  60% {
+    transform: translate(-2px, -2px);
+    filter: hue-rotate(135deg);
+  }
+  70% {
+    transform: translate(2px, 2px);
+    filter: hue-rotate(225deg);
+  }
+  80% {
+    transform: translate(2px, -2px);
+    filter: hue-rotate(315deg);
+  }
+  90% {
+    transform: translate(-1px, 1px);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+}
+
+@keyframes glitch-text-1 {
+  0% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-1px, 1px);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translate(-1px, -1px);
+    opacity: 0.6;
+  }
+  60% {
+    transform: translate(1px, 1px);
+    opacity: 0.8;
+  }
+  80% {
+    transform: translate(1px, -1px);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-text-2 {
+  0% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(1px, -1px);
+    opacity: 0.6;
+  }
+  40% {
+    transform: translate(1px, 1px);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translate(-1px, -1px);
+    opacity: 0.4;
+  }
+  80% {
+    transform: translate(-1px, 1px);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-text-intense-1 {
+  0% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  10% {
+    transform: translate(-2px, 2px);
+    opacity: 0.9;
+  }
+  20% {
+    transform: translate(-2px, -2px);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translate(2px, 2px);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translate(2px, -2px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-1px, 1px);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translate(-1px, -1px);
+    opacity: 0.5;
+  }
+  70% {
+    transform: translate(1px, 1px);
+    opacity: 0.8;
+  }
+  80% {
+    transform: translate(1px, -1px);
+    opacity: 0.7;
+  }
+  90% {
+    transform: translate(-1px, 1px);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-text-intense-2 {
+  0% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  10% {
+    transform: translate(2px, -2px);
+    opacity: 0.8;
+  }
+  20% {
+    transform: translate(2px, 2px);
+    opacity: 0.9;
+  }
+  30% {
+    transform: translate(-2px, -2px);
+    opacity: 0.6;
+  }
+  40% {
+    transform: translate(-2px, 2px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(1px, -1px);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translate(1px, 1px);
+    opacity: 0.5;
+  }
+  70% {
+    transform: translate(-1px, -1px);
+    opacity: 0.9;
+  }
+  80% {
+    transform: translate(-1px, 1px);
+    opacity: 0.6;
+  }
+  90% {
+    transform: translate(1px, -1px);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+}
+
+/* ======================
+   VIBE MODE SYSTEM
+   ====================== */
+
+/* Base vibe mode class - all modes inherit this */
+.vibe-mode {
+  transition: all 0.5s ease;
+}
+
+/* ======================
+   ELECTRO MODE (Default)
+   ====================== */
+.electro-mode {
+  /* Base styles - no additional effects */
+  position: relative;
+}
+
+/* Enhanced star field effect for electro mode */
+.electro-mode::before,
+.electro-mode::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.electro-mode::before {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(59, 130, 246, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 40px 70px, rgba(147, 197, 253, 0.8), transparent),
+    radial-gradient(2px 2px at 90px 40px, rgba(59, 130, 246, 0.8), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(147, 197, 253, 0.7), transparent),
+    radial-gradient(2.5px 2.5px at 160px 30px, rgba(59, 130, 246, 0.8), transparent),
+    radial-gradient(1px 1px at 75px 55px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 185px 95px, rgba(147, 197, 253, 0.8), transparent);
+  background-size: 200px 100px;
+  animation: starFadeIn1 3s ease-out forwards, starTwinkle1 15s ease-in-out infinite 3s;
+}
+
+.electro-mode::after {
+  background-image: 
+    radial-gradient(1.5px 1.5px at 60px 20px, rgba(147, 197, 253, 0.8), transparent),
+    radial-gradient(2px 2px at 100px 60px, rgba(59, 130, 246, 0.8), transparent),
+    radial-gradient(1px 1px at 150px 10px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(2.5px 2.5px at 180px 50px, rgba(59, 130, 246, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 220px 70px, rgba(147, 197, 253, 0.8), transparent),
+    radial-gradient(1px 1px at 45px 85px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(2px 2px at 195px 25px, rgba(59, 130, 246, 0.8), transparent);
+  background-size: 250px 120px;
+  animation: starFadeIn2 4s ease-out forwards, starTwinkle2 20s ease-in-out infinite 4s;
+}
+
+@keyframes starFadeIn1 {
+  0% {
+    opacity: 0;
+    transform: translateX(0px) translateY(0px);
+  }
+  100% {
+    opacity: 0.5;
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes starFadeIn2 {
+  0% {
+    opacity: 0;
+    transform: translateX(0px) translateY(0px);
+  }
+  100% {
+    opacity: 0.4;
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes starTwinkle1 {
+  0% {
+    opacity: 0.5;
+    filter: brightness(1);
+    transform: translateX(0px) translateY(0px);
+  }
+  25% {
+    opacity: 0.7;
+    filter: brightness(1.4);
+    transform: translateX(5px) translateY(-3px);
+  }
+  50% {
+    opacity: 0.6;
+    filter: brightness(1.8);
+    transform: translateX(8px) translateY(-6px);
+  }
+  75% {
+    opacity: 0.8;
+    filter: brightness(1.2);
+    transform: translateX(4px) translateY(-2px);
+  }
+  100% {
+    opacity: 0.5;
+    filter: brightness(1);
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes starTwinkle2 {
+  0% {
+    opacity: 0.4;
+    filter: brightness(1);
+    transform: translateX(0px) translateY(0px);
+  }
+  33% {
+    opacity: 0.6;
+    filter: brightness(1.6);
+    transform: translateX(-6px) translateY(3px);
+  }
+  66% {
+    opacity: 0.75;
+    filter: brightness(1.3);
+    transform: translateX(-10px) translateY(5px);
+  }
+  100% {
+    opacity: 0.4;
+    filter: brightness(1);
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+.electro-mode .vibe-title-1,
+.electro-mode .vibe-title-2 {
+  /* Default title styling - uses existing CSS custom properties */
+  position: relative;
+  z-index: 1;
+}
+
+.electro-mode .vibe-image {
+  /* Default image styling - no filters */
+}
+
+.electro-mode .vibe-glass {
+  /* Default glass effect - uses existing .glass-effect */
+  position: relative;
+  z-index: 1;
+}
+
+/* ======================
+   FUSION MODE
+   ====================== */
+.fusion-mode {
+  animation: fusionPulse 2s ease-in-out infinite;
+}
+
+@keyframes fusionPulse {
+  0%, 100% {
+    filter: hue-rotate(0deg) saturate(1.2);
+  }
+  25% {
+    filter: hue-rotate(15deg) saturate(1.4);
+  }
+  50% {
+    filter: hue-rotate(-10deg) saturate(1.3);
+  }
+  75% {
+    filter: hue-rotate(5deg) saturate(1.5);
+  }
+}
+
+.fusion-mode .vibe-title-1 {
+  color: #FFD700 !important;
+  text-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.8),
+    0 0 40px rgba(255, 107, 53, 0.6),
+    2px 2px 4px rgba(74, 20, 140, 0.8) !important;
+}
+
+.fusion-mode .vibe-title-2 {
+  color: #FF6B35 !important;
+  text-shadow: 
+    0 0 20px rgba(255, 107, 53, 0.8),
+    0 0 40px rgba(74, 20, 140, 0.6),
+    -2px 2px 4px rgba(255, 215, 0, 0.8) !important;
+}
+
+.fusion-mode .vibe-image {
+  filter: sepia(0.3) hue-rotate(20deg) saturate(1.5) contrast(1.1) !important;
+}
+
+.fusion-mode .vibe-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(74, 20, 140, 0.2),
+    rgba(255, 215, 0, 0.1),
+    rgba(255, 107, 53, 0.2)
+  ) !important;
+  border: 2px solid rgba(255, 215, 0, 0.3) !important;
+  box-shadow: 
+    0 0 30px rgba(255, 215, 0, 0.3),
+    inset 0 0 20px rgba(74, 20, 140, 0.1) !important;
+  animation: fusionGlass 4s ease-in-out infinite;
+}
+
+@keyframes fusionGlass {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.005);
+    filter: brightness(1.1);
+  }
+}
+
+/* Fusion mode text color overrides */
+.fusion-mode .text-primary {
+  color: #FFD700 !important;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+.fusion-mode .text-secondary {
+  color: #FF6B35 !important;
+}
+
+.fusion-mode .text-accent-blue {
+  color: #FFD700 !important;
+}
+
+.fusion-mode .text-accent-green {
+  color: #FF6B35 !important;
+}
+
+.fusion-mode .border {
+  border-color: rgba(255, 215, 0, 0.3) !important;
+}
+
+.fusion-mode .hover\:bg-white\/5:hover {
+  background-color: rgba(255, 107, 53, 0.1) !important;
+}
+
+/* ======================
+   INDIE MODE
+   ====================== */
+.indie-mode {
+  /* Ready for indie-specific styling */
+}
+
+.indie-mode .vibe-title-1,
+.indie-mode .vibe-title-2 {
+  /* Ready for indie title styling */
+}
+
+.indie-mode .vibe-image {
+  /* Ready for indie image styling */
+}
+
+.indie-mode .vibe-glass {
+  /* Ready for indie glass styling */
+}
+
+/* ======================
+   JAZZ MODE
+   ====================== */
+.jazz-mode {
+  --font-primary: 'Inter', -apple-system, 'Helvetica Neue', 'Segoe UI', sans-serif;
+  --font-secondary: 'Times New Roman', 'Times', 'Georgia', serif;
+  --font-display: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+  
+  background: linear-gradient(135deg, var(--jazz-deep-charcoal) 0%, #0f0f0f 50%, var(--jazz-deep-charcoal) 100%);
+  animation: jazzAmbience 12s ease-in-out infinite;
+}
+
+@keyframes jazzAmbience {
+  0%, 100% {
+    filter: sepia(0.1) contrast(1.05) brightness(0.98);
+  }
+  50% {
+    filter: sepia(0.15) contrast(1.08) brightness(1.02);
+  }
+}
+
+.jazz-mode .vibe-title-1 {
+  color: var(--jazz-warm-cream) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  text-shadow: 
+    0 2px 4px rgba(139, 38, 53, 0.3),
+    0 0 20px rgba(247, 243, 233, 0.2) !important;
+  animation: jazzTitlePresence 8s ease-in-out infinite;
+}
+
+.jazz-mode .vibe-title-2 {
+  color: var(--jazz-muted-gold) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  text-shadow: 
+    0 2px 6px rgba(139, 38, 53, 0.4),
+    0 0 25px rgba(212, 175, 55, 0.3) !important;
+  animation: jazzTitlePresence 8s ease-in-out infinite 0.5s;
+}
+
+@keyframes jazzTitlePresence {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateY(-1px) scale(1.002);
+  }
+}
+
+.jazz-mode .vibe-image {
+  filter: sepia(0.25) contrast(1.15) brightness(0.92) saturate(0.85) !important;
+  box-shadow: 
+    0 0 25px rgba(139, 38, 53, 0.25),
+    0 0 60px rgba(212, 175, 55, 0.1),
+    inset 0 0 15px rgba(0, 0, 0, 0.2) !important;
+  animation: jazzImageGlow 15s ease-in-out infinite;
+}
+
+@keyframes jazzImageGlow {
+  0%, 100% {
+    transform: rotate(-3deg) scale(1);
+    box-shadow: 
+      0 0 25px rgba(139, 38, 53, 0.25),
+      0 0 60px rgba(212, 175, 55, 0.1),
+      inset 0 0 15px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: rotate(-2.8deg) scale(1.005);
+    box-shadow: 
+      0 0 30px rgba(139, 38, 53, 0.3),
+      0 0 80px rgba(212, 175, 55, 0.15),
+      inset 0 0 20px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.jazz-mode .vibe-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 26, 0.88) 0%,
+    rgba(139, 38, 53, 0.08) 25%,
+    rgba(92, 122, 137, 0.06) 50%,
+    rgba(26, 26, 26, 0.92) 100%
+  ) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow: 
+    0 0 30px rgba(139, 38, 53, 0.15),
+    inset 0 0 25px rgba(247, 243, 233, 0.03),
+    0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(15px) sepia(0.05) !important;
+  animation: jazzGlassRhythm 20s ease-in-out infinite;
+}
+
+@keyframes jazzGlassRhythm {
+  0%, 100% {
+    border-color: rgba(212, 175, 55, 0.25);
+    box-shadow: 
+      0 0 30px rgba(139, 38, 53, 0.15),
+      inset 0 0 25px rgba(247, 243, 233, 0.03),
+      0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  33% {
+    border-color: rgba(139, 38, 53, 0.3);
+    box-shadow: 
+      0 0 40px rgba(212, 175, 55, 0.12),
+      inset 0 0 30px rgba(156, 175, 136, 0.04),
+      0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+  66% {
+    border-color: rgba(156, 175, 136, 0.2);
+    box-shadow: 
+      0 0 35px rgba(92, 122, 137, 0.18),
+      inset 0 0 28px rgba(212, 175, 55, 0.05),
+      0 8px 32px rgba(0, 0, 0, 0.38);
+  }
+}
+
+/* Jazz mode typography and text colors */
+.jazz-mode {
+  font-family: var(--font-primary) !important;
+}
+
+.jazz-mode h1, .jazz-mode h2, .jazz-mode h3 {
+  font-family: var(--font-display) !important;
+}
+
+.jazz-mode .text-primary {
+  color: var(--jazz-warm-cream) !important;
+  font-family: var(--font-primary) !important;
+}
+
+.jazz-mode .text-secondary {
+  color: var(--jazz-dusty-blue) !important;
+  font-family: var(--font-secondary) !important;
+}
+
+.jazz-mode .text-accent-blue {
+  color: var(--jazz-muted-gold) !important;
+  font-weight: 500 !important;
+}
+
+.jazz-mode .text-accent-green {
+  color: var(--jazz-soft-sage) !important;
+}
+
+.jazz-mode .border {
+  border-color: rgba(139, 38, 53, 0.3) !important;
+}
+
+.jazz-mode .hover\:bg-white\/5:hover {
+  background-color: rgba(139, 38, 53, 0.08) !important;
+}
+
+.jazz-mode .hover\:bg-white\/10:hover {
+  background-color: rgba(212, 175, 55, 0.06) !important;
+}
+
+/* Jazz mode buttons */
+.jazz-mode .btn-primary {
+  background: linear-gradient(135deg, var(--jazz-rich-burgundy), #6b1e2b);
+  border: 1px solid var(--jazz-muted-gold);
+  color: var(--jazz-warm-cream);
+  font-family: var(--font-primary);
+  font-weight: 500;
+}
+
+.jazz-mode .btn-primary:hover {
+  background: linear-gradient(135deg, #6b1e2b, var(--jazz-rich-burgundy));
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.jazz-mode .btn-secondary {
+  border: 2px solid var(--jazz-muted-gold);
+  color: var(--jazz-warm-cream);
+  font-family: var(--font-primary);
+  background: rgba(26, 26, 26, 0.8);
+}
+
+.jazz-mode .btn-secondary:hover {
+  background: var(--jazz-muted-gold);
+  color: var(--jazz-deep-charcoal);
+}
+
+.jazz-mode .btn-streaming {
+  border: 2px solid var(--jazz-soft-sage);
+  color: var(--jazz-warm-cream);
+  font-family: var(--font-primary);
+  background: rgba(26, 26, 26, 0.7);
+}
+
+.jazz-mode .btn-streaming:hover {
+  background: var(--jazz-soft-sage);
+  color: var(--jazz-deep-charcoal);
+}
+
+
+.jazz-button {
+  background: linear-gradient(135deg, #4A148C, #191970);
+  border: 1px solid #FFD700;
+  color: #FFD700;
+  font-family: 'Disket Mono', monospace;
+}
+
+.jazz-button:hover {
+  background: linear-gradient(135deg, #191970, #FF6B35);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.jazz-button-active {
+  background: linear-gradient(135deg, #FFD700, #FF6B35);
+  border: 2px solid #4A148C;
+  color: #1a1a1a;
+  font-weight: bold;
+  animation: jazzButtonPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes jazzButtonPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 107, 53, 0.9);
+  }
+}
+
+
+/* CRT Glitch Effects for Titles */
+.crt-title {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.crt-title::before,
+.crt-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  background: transparent !important;
+}
+
+.crt-title:hover {
+  animation: crtFlicker 0.15s ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.crt-title:hover::before {
+  animation: crtGlitch1 0.3s ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  color: #00ffff;
+  opacity: 0.8;
+  text-shadow: -2px 0 #ff00ff;
+  background: transparent !important;
+}
+
+.crt-title:hover::after {
+  animation: crtGlitch2 0.3s ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  color: #ff00ff;
+  opacity: 0.8;
+  text-shadow: 2px 0 #00ffff;
+  background: transparent !important;
+}
+
+.crt-title:active {
+  animation: crtGlitchIntense 0.2s ease-in-out;
+}
+
+.crt-title:active::before {
+  animation: crtGlitchIntense1 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.crt-title:active::after {
+  animation: crtGlitchIntense2 0.2s ease-in-out;
+  opacity: 1;
+}
+
+@keyframes crtFlicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.98;
+  }
+}
+
+
+@keyframes crtGlitchIntense {
+  0%, 100% {
+    transform: translate(0) scale(1);
+    filter: blur(0);
+  }
+  20% {
+    transform: translate(-2px, 1px) scale(1.01);
+    filter: blur(0.5px);
+  }
+  40% {
+    transform: translate(2px, -1px) scale(0.99);
+    filter: blur(0);
+  }
+  60% {
+    transform: translate(-1px, 2px) scale(1.01);
+    filter: blur(0.3px);
+  }
+  80% {
+    transform: translate(1px, -2px) scale(0.99);
+    filter: blur(0);
+  }
+}
+
+@keyframes crtGlitchIntense1 {
+  0%, 100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+  }
+  10% {
+    transform: translate(-4px, 0);
+    clip-path: inset(10% 0 85% 0);
+  }
+  20% {
+    transform: translate(4px, 0);
+    clip-path: inset(40% 0 45% 0);
+  }
+  30% {
+    transform: translate(-3px, 0);
+    clip-path: inset(70% 0 15% 0);
+  }
+  40% {
+    transform: translate(3px, 0);
+    clip-path: inset(5% 0 80% 0);
+  }
+  50% {
+    transform: translate(-2px, 0);
+    clip-path: inset(50% 0 40% 0);
+  }
+  60% {
+    transform: translate(2px, 0);
+    clip-path: inset(25% 0 60% 0);
+  }
+  70% {
+    transform: translate(-3px, 0);
+    clip-path: inset(85% 0 5% 0);
+  }
+  80% {
+    transform: translate(3px, 0);
+    clip-path: inset(15% 0 70% 0);
+  }
+  90% {
+    transform: translate(-1px, 0);
+    clip-path: inset(60% 0 30% 0);
+  }
+}
+
+@keyframes crtGlitchIntense2 {
+  0%, 100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+  }
+  10% {
+    transform: translate(4px, 0);
+    clip-path: inset(75% 0 10% 0);
+  }
+  20% {
+    transform: translate(-4px, 0);
+    clip-path: inset(20% 0 65% 0);
+  }
+  30% {
+    transform: translate(3px, 0);
+    clip-path: inset(55% 0 30% 0);
+  }
+  40% {
+    transform: translate(-3px, 0);
+    clip-path: inset(85% 0 5% 0);
+  }
+  50% {
+    transform: translate(2px, 0);
+    clip-path: inset(30% 0 55% 0);
+  }
+  60% {
+    transform: translate(-2px, 0);
+    clip-path: inset(65% 0 25% 0);
+  }
+  70% {
+    transform: translate(3px, 0);
+    clip-path: inset(10% 0 80% 0);
+  }
+  80% {
+    transform: translate(-3px, 0);
+    clip-path: inset(45% 0 45% 0);
+  }
+  90% {
+    transform: translate(1px, 0);
+    clip-path: inset(35% 0 50% 0);
+  }
+}
+
+@keyframes crtGlitch1 {
+  0% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-2px, 0);
+    clip-path: inset(20% 0 30% 0);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translate(-2px, 0);
+    clip-path: inset(50% 0 20% 0);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translate(1px, 0);
+    clip-path: inset(10% 0 60% 0);
+    opacity: 0.8;
+  }
+  80% {
+    transform: translate(0, 0);
+    clip-path: inset(80% 0 5% 0);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+
+@keyframes crtGlitch2 {
+  0% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(2px, 0);
+    clip-path: inset(60% 0 10% 0);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translate(2px, 0);
+    clip-path: inset(15% 0 40% 0);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translate(-1px, 0);
+    clip-path: inset(40% 0 30% 0);
+    opacity: 0.8;
+  }
+  80% {
+    transform: translate(0, 0);
+    clip-path: inset(5% 0 80% 0);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+
+/* Drop Zone Wiggle Animation */
+@keyframes dropZoneWiggle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  10% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  20% {
+    transform: rotate(10deg) scale(1.1);
+  }
+  30% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  40% {
+    transform: rotate(10deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+  60% {
+    transform: rotate(5deg) scale(1.05);
+  }
+  70% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+  80% {
+    transform: rotate(5deg) scale(1.05);
+  }
+  90% {
+    transform: rotate(0deg) scale(1.02);
+  }
+}
+
+.wiggle-animation {
+  animation: dropZoneWiggle 1s ease-in-out;
+}

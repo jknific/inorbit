@@ -1,0 +1,17 @@
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  output: 'export',
+  basePath: '/inorbit',
+  assetPrefix: '/inorbit',
+  experimental: {
+    optimizePackageImports: ['clsx', 'tailwind-merge']
+  },
+  images: {
+    unoptimized: true,
+    domains: [],
+    formats: ['image/webp', 'image/avif'],
+  },
+}
+
+export default nextConfig

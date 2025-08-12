@@ -1,0 +1,609 @@
+'use client'
+
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+
+interface Position {
+  x: number
+  y: number
+}
+
+interface Velocity {
+  x: number
+  y: number
+}
+
+interface InteractiveFloppyDiskProps {
+  fusionMode?: boolean
+  onEjectChange?: (isEjected: boolean) => void
+  isEjected?: boolean
+  onDropZoneChange?: (show: boolean, isOver: boolean) => void
+  onInsertDisk?: () => void
+}
+
+export interface InteractiveFloppyDiskRef {
+  insertDisk: () => void
+}
+
+const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFloppyDiskProps>(({ fusionMode, onEjectChange, isEjected: externalIsEjected, onDropZoneChange, onInsertDisk }, ref) => {
+  const diskRef = useRef<HTMLDivElement>(null)
+  const staticDiskRef = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const rewindSfxRef = useRef<HTMLAudioElement>(null)
+  const pauseSfxRef = useRef<HTMLAudioElement>(null)
+  const ejectSfxRef = useRef<HTMLAudioElement>(null)
+  const animationRef = useRef<number | undefined>(undefined)
+  const isDraggingRef = useRef(false)
+  const dragStartRef = useRef<Position>({ x: 0, y: 0 })
+  const velocityRef = useRef<Velocity>({ x: 0, y: 0 })
+  const rotationRef = useRef(0)
+  const positionRef = useRef<Position>({ x: 0, y: 0 })
+  const [isGrabbing, setIsGrabbing] = useState(false)
+  const [isEjected, setIsEjected] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    insertDisk: handleReturnDisk
+  }))
+
+  // Sync with external state
+  useEffect(() => {
+    if (externalIsEjected !== undefined && externalIsEjected !== isEjected) {
+      setIsEjected(externalIsEjected)
+      if (!externalIsEjected) {
+        // Reset physics when returning to static state
+        velocityRef.current = { x: 0, y: 0 }
+        rotationRef.current = 0
+        setIsGrabbing(false)
+      }
+    }
+  }, [externalIsEjected, isEjected])
+
+  // Maintain disk position when fusion mode changes
+  useEffect(() => {
+    if (isEjected && diskRef.current && !isDraggingRef.current) {
+      // Re-apply the current position to ensure disk stays in place
+      const disk = diskRef.current
+      disk.style.transform = `translate(${positionRef.current.x - 150}px, ${positionRef.current.y - 150}px) rotate(${rotationRef.current}deg)`
+    }
+  }, [fusionMode, isEjected])
+
+  const handleEjectDisk = () => {
+    if (!isEjected) {
+      // Play eject sound effect
+      if (ejectSfxRef.current) {
+        ejectSfxRef.current.currentTime = 0
+        ejectSfxRef.current.play()
+      }
+      
+      // Pause the main track if playing
+      if (audioRef.current && isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      }
+      
+      setIsEjected(true)
+      onEjectChange?.(true)
+      
+      // Show drop zone immediately when ejected
+      onDropZoneChange?.(true, false)
+      
+      // Initialize position from static disk position
+      const staticDisk = staticDiskRef.current
+      if (staticDisk) {
+        const rect = staticDisk.getBoundingClientRect()
+        
+        positionRef.current = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        }
+        
+        // Give it a small initial eject velocity
+        velocityRef.current = {
+          x: (Math.random() - 0.5) * 8,
+          y: -3 - Math.random() * 3
+        }
+        rotationRef.current = -3 // Start with slight rotation like in original
+      }
+    }
+  }
+
+  const handleReturnDisk = () => {
+    if (isEjected) {
+      // Play eject sound effect (same sound for inserting)
+      if (ejectSfxRef.current) {
+        ejectSfxRef.current.currentTime = 0
+        ejectSfxRef.current.play()
+      }
+      
+      setIsEjected(false)
+      onEjectChange?.(false)
+      onInsertDisk?.() // Notify parent that disk was inserted
+      // Reset physics
+      velocityRef.current = { x: 0, y: 0 }
+      rotationRef.current = 0
+      setIsGrabbing(false)
+    }
+  }
+
+  const handlePlay = () => {
+    if (audioRef.current) {
+      audioRef.current.play()
+      setIsPlaying(true)
+    }
+  }
+
+  const handlePause = () => {
+    // Play pause sound effect
+    if (pauseSfxRef.current) {
+      pauseSfxRef.current.currentTime = 0
+      pauseSfxRef.current.play()
+    }
+    
+    // Pause the main track (preserves current time)
+    if (audioRef.current) {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    }
+  }
+
+  const handleRewind = () => {
+    // Play rewind sound effect
+    if (rewindSfxRef.current) {
+      rewindSfxRef.current.currentTime = 0
+      rewindSfxRef.current.play()
+    }
+    
+    // Pause if currently playing, then rewind
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      }
+      audioRef.current.currentTime = 0
+    }
+  }
+
+  // Handle audio ended event
+  useEffect(() => {
+    const audio = audioRef.current
+    if (audio) {
+      const handleEnded = () => setIsPlaying(false)
+      audio.addEventListener('ended', handleEnded)
+      return () => audio.removeEventListener('ended', handleEnded)
+    }
+  }, [])
+
+  useEffect(() => {
+    const disk = diskRef.current
+    if (!disk || !isEjected) return
+
+    // Physics constants
+    const FRICTION = 0.985 // Air resistance
+    const BOUNCE_DAMPING = 0.7 // Energy lost on bounce
+    const MIN_VELOCITY = 0.1 // Threshold to stop movement
+    const ROTATION_FACTOR = 0.5 // How much rotation per velocity unit
+    const MAX_VELOCITY = 30 // Cap maximum velocity
+
+    // Track mouse velocity for throwing
+    const velocityHistory: Position[] = []
+    let lastMouseTime = Date.now()
+
+    const handleMouseDown = (e: MouseEvent) => {
+      const rect = disk.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+      
+      // Check if click is on the disk (circular hit area)
+      const distance = Math.sqrt(
+        Math.pow(e.clientX - centerX, 2) + 
+        Math.pow(e.clientY - centerY, 2)
+      )
+      
+      if (distance <= rect.width / 2) {
+        isDraggingRef.current = true
+        setIsGrabbing(true)
+        // Show insert icon when dragging starts
+        onDropZoneChange?.(true, false) // Show drop zone, not over
+        
+        dragStartRef.current = {
+          x: e.clientX - positionRef.current.x,
+          y: e.clientY - positionRef.current.y
+        }
+        
+        // Reset velocity when grabbing
+        velocityRef.current = { x: 0, y: 0 }
+        velocityHistory.length = 0
+        lastMouseTime = Date.now()
+        
+        // Prevent text selection
+        e.preventDefault()
+      }
+    }
+
+    const checkDropZone = (x: number, y: number) => {
+      // Check if disk is over the insert icon in top-right
+      const iconSize = 60
+      const iconMargin = 20
+      const dropZoneLeft = window.innerWidth - iconSize - iconMargin
+      const dropZoneRight = window.innerWidth - iconMargin
+      const dropZoneTop = iconMargin
+      const dropZoneBottom = iconMargin + iconSize
+      
+      const isInDropZone = x >= dropZoneLeft && x <= dropZoneRight && 
+                          y >= dropZoneTop && y <= dropZoneBottom
+      
+      // setIsOverDropZone(isInDropZone)
+      onDropZoneChange?.(true, isInDropZone) // Update parent with over state
+      return isInDropZone
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return
+
+      const currentTime = Date.now()
+      const dt = currentTime - lastMouseTime
+      
+      if (dt > 0) {
+        // Calculate instantaneous velocity
+        const newPos = {
+          x: e.clientX - dragStartRef.current.x,
+          y: e.clientY - dragStartRef.current.y
+        }
+        
+        const velocity = {
+          x: (newPos.x - positionRef.current.x) / dt * 16, // Convert to ~60fps units
+          y: (newPos.y - positionRef.current.y) / dt * 16
+        }
+        
+        // Keep history of recent velocities for smooth throwing
+        velocityHistory.push(velocity)
+        if (velocityHistory.length > 5) {
+          velocityHistory.shift()
+        }
+        
+        positionRef.current = newPos
+        lastMouseTime = currentTime
+
+        // Check if dragging over drop zone
+        checkDropZone(e.clientX, e.clientY)
+      }
+
+      // Update visual position while dragging
+      disk.style.transform = `translate(${positionRef.current.x - 150}px, ${positionRef.current.y - 150}px) rotate(${rotationRef.current}deg)`
+    }
+
+    const handleMouseUp = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return
+      
+      isDraggingRef.current = false
+      setIsGrabbing(false)
+      // Hide insert icon when dragging ends
+      onDropZoneChange?.(false, false) // Hide drop zone
+      
+      // Check if released over drop zone
+      const isInDropZone = checkDropZone(e.clientX, e.clientY)
+      // Always clear drop zone highlight on release
+      
+      if (isInDropZone) {
+        // Insert disk immediately if dropped in zone
+        handleReturnDisk()
+        onDropZoneChange?.(false, false) // Hide drop zone after successful drop
+        return
+      }
+      
+      // Calculate throw velocity from recent movement history
+      if (velocityHistory.length > 0) {
+        const avgVelocity = velocityHistory.reduce(
+          (acc, vel) => ({ x: acc.x + vel.x, y: acc.y + vel.y }),
+          { x: 0, y: 0 }
+        )
+        
+        velocityRef.current = {
+          x: Math.min(Math.max(avgVelocity.x / velocityHistory.length, -MAX_VELOCITY), MAX_VELOCITY),
+          y: Math.min(Math.max(avgVelocity.y / velocityHistory.length, -MAX_VELOCITY), MAX_VELOCITY)
+        }
+      }
+    }
+
+    // Add touch support
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0]
+      handleMouseDown(touch as unknown as MouseEvent)
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0]
+      handleMouseMove(touch as unknown as MouseEvent)
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touch = e.changedTouches[0]
+      handleMouseUp(touch as unknown as MouseEvent)
+    }
+
+    // Physics animation loop
+    const animate = () => {
+      if (!isDraggingRef.current) {
+        // Apply physics only when not dragging
+        if (Math.abs(velocityRef.current.x) > MIN_VELOCITY || 
+            Math.abs(velocityRef.current.y) > MIN_VELOCITY) {
+          
+          // Update position
+          positionRef.current.x += velocityRef.current.x
+          positionRef.current.y += velocityRef.current.y
+          
+          // Get boundaries (with some padding for the disk size)
+          const diskRadius = 150 // Approximate radius for larger VHS
+          const minX = diskRadius
+          const maxX = window.innerWidth - diskRadius
+          const minY = diskRadius
+          const maxY = window.innerHeight - diskRadius
+          
+          // Bounce off walls
+          if (positionRef.current.x <= minX || positionRef.current.x >= maxX) {
+            velocityRef.current.x *= -BOUNCE_DAMPING
+            positionRef.current.x = positionRef.current.x <= minX ? minX : maxX
+            
+            // Add some spin on bounce
+            rotationRef.current += velocityRef.current.y * 2
+          }
+          
+          if (positionRef.current.y <= minY || positionRef.current.y >= maxY) {
+            velocityRef.current.y *= -BOUNCE_DAMPING
+            positionRef.current.y = positionRef.current.y <= minY ? minY : maxY
+            
+            // Add some spin on bounce
+            rotationRef.current += velocityRef.current.x * 2
+          }
+          
+          // Apply friction
+          velocityRef.current.x *= FRICTION
+          velocityRef.current.y *= FRICTION
+          
+          // Update rotation based on velocity (air hockey puck spin)
+          const speed = Math.sqrt(velocityRef.current.x ** 2 + velocityRef.current.y ** 2)
+          rotationRef.current += speed * ROTATION_FACTOR
+          
+          // Update visual position
+          disk.style.transform = `translate(${positionRef.current.x - 150}px, ${positionRef.current.y - 150}px) rotate(${rotationRef.current}deg)`
+        } else {
+          // Stop tiny movements
+          velocityRef.current = { x: 0, y: 0 }
+        }
+      }
+      
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    // Start animation loop
+    animate()
+
+    // Add event listeners
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    document.addEventListener('touchstart', handleTouchStart)
+    document.addEventListener('touchmove', handleTouchMove)
+    document.addEventListener('touchend', handleTouchEnd)
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [isEjected, handleReturnDisk, onDropZoneChange])
+
+  return (
+    <>
+      {/* Static Floppy Disk Image - completely hidden when ejected */}
+      {!isEjected && (
+        <div className="text-center mb-8 relative">
+          <div 
+            ref={staticDiskRef}
+            className="mx-auto max-w-lg md:max-w-xl relative opacity-90 hover:opacity-100 transition-all duration-500 vibe-image"
+            style={{
+              transform: 'rotate(-3deg)',
+              transition: 'opacity 0.5s ease, transform 0.3s ease'
+            }}
+          >
+          <img 
+            src="/images/in-orbit-vhs.png" 
+            alt="IN_0RBIT Album on VHS" 
+            className="w-full h-auto object-contain"
+            style={{
+              filter: 'drop-shadow(0 5px 10px rgba(0,0,0,0.2))',
+              userSelect: 'none',
+              WebkitUserDrag: 'none'
+            } as React.CSSProperties}
+            draggable={false}
+          />
+          
+          {/* Label Maker Tape Overlay */}
+          <div 
+            className="absolute top-[15%] left-[10%] right-[10%] h-8 
+                      bg-black/90 
+                      border-t border-b border-white/20
+                      flex items-center justify-center
+                      shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+            style={{
+              transform: 'rotate(-2deg)',
+              background: 'linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.95) 50%, rgba(0,0,0,0.9) 100%)',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)',
+            }}
+          >
+            {/* Label Text */}
+            <div 
+              className="relative px-3 text-white"
+              style={{
+                fontFamily: 'Courier, monospace',
+                fontSize: '13px',
+                fontWeight: 'bold',
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+              }}
+            >
+              TRACK PREVIEW
+            </div>
+            
+            {/* Tape Edges - Left */}
+            <div 
+              className="absolute left-0 top-0 bottom-0 w-2"
+              style={{
+                background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)',
+              }}
+            />
+            
+            {/* Tape Edges - Right */}
+            <div 
+              className="absolute right-0 top-0 bottom-0 w-2"
+              style={{
+                background: 'linear-gradient(270deg, rgba(255,255,255,0.05) 0%, transparent 100%)',
+              }}
+            />
+            
+            {/* Perforated Edges Effect */}
+            <div 
+              className="absolute left-0 right-0 top-0 h-[1px]"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.2) 3px, rgba(255,255,255,0.2) 4px)',
+              }}
+            />
+            <div 
+              className="absolute left-0 right-0 bottom-0 h-[1px]"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.2) 3px, rgba(255,255,255,0.2) 4px)',
+              }}
+            />
+          </div>
+          
+          {/* VHS Control Buttons - Old School Style */}
+          {!isEjected && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+              {/* Rewind Button */}
+              <button
+                onClick={handleRewind}
+                className="w-14 h-11 bg-gradient-to-b from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 
+                          flex items-center justify-center transition-all duration-150 
+                          border-2 border-gray-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_2px_4px_rgba(0,0,0,0.5)]
+                          active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] active:translate-y-[1px] rounded-sm"
+                title="Rewind"
+              >
+                <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 7L10 1V13L2 7Z" fill="white" opacity="0.9"/>
+                  <path d="M10 7L18 1V13L10 7Z" fill="white" opacity="0.9"/>
+                </svg>
+              </button>
+              
+              {/* Play/Pause Button */}
+              <button
+                onClick={isPlaying ? handlePause : handlePlay}
+                className="w-14 h-11 bg-gradient-to-b from-green-700 to-green-900 hover:from-green-600 hover:to-green-800 
+                          flex items-center justify-center transition-all duration-150 
+                          border-2 border-green-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_2px_4px_rgba(0,0,0,0.5)]
+                          active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] active:translate-y-[1px] rounded-sm"
+                title={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="4" height="10" fill="white" opacity="0.9"/>
+                    <rect x="8" y="2" width="4" height="10" fill="white" opacity="0.9"/>
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 2L12 7L3 12V2Z" fill="white" opacity="0.9"/>
+                  </svg>
+                )}
+              </button>
+              
+              {/* Eject Button */}
+              <button
+                onClick={handleEjectDisk}
+                className="w-14 h-11 bg-gradient-to-b from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 
+                          flex items-center justify-center transition-all duration-150 
+                          border-2 border-red-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_2px_4px_rgba(0,0,0,0.5)]
+                          active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] active:translate-y-[1px] rounded-sm"
+                title="Eject"
+              >
+                <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 2L13 8H3L8 2Z" fill="white" opacity="0.9"/>
+                  <rect x="3" y="10" width="10" height="2" fill="white" opacity="0.9"/>
+                </svg>
+              </button>
+            </div>
+          )}
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Floppy Disk (only visible when ejected) */}
+      {isEjected && (
+        <div 
+          ref={diskRef}
+          className={`fixed z-10 ${isGrabbing ? 'cursor-grabbing' : 'cursor-grab'}`}
+          style={{
+            width: '300px',
+            height: '300px',
+            transition: 'none',
+            userSelect: 'none',
+            pointerEvents: 'auto',
+            willChange: 'transform',
+            left: 0,
+            top: 0
+          }}
+        >
+          <img 
+            src="/images/in-orbit-vhs.png" 
+            alt="IN_0RBIT Album on VHS" 
+            className="w-full h-full object-contain"
+            style={{
+              filter: isGrabbing ? 'brightness(1.1) drop-shadow(0 10px 20px rgba(0,0,0,0.3))' : 'drop-shadow(0 5px 10px rgba(0,0,0,0.2))',
+              transition: 'filter 0.2s ease',
+              pointerEvents: 'none',
+              userSelect: 'none',
+              WebkitUserDrag: 'none'
+            } as React.CSSProperties}
+            draggable={false}
+          />
+        </div>
+      )}
+
+      {/* Hidden Audio Elements */}
+      <audio 
+        ref={audioRef}
+        src="/audio/in-orbit-preview.mp3"
+        preload="metadata"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={rewindSfxRef}
+        src="/audio/rewind.mp3"
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={pauseSfxRef}
+        src="/audio/pause.mp3"
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={ejectSfxRef}
+        src="/audio/eject.mp3"
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+    </>
+  )
+})
+
+InteractiveFloppyDisk.displayName = 'InteractiveFloppyDisk'
+
+export default InteractiveFloppyDisk
