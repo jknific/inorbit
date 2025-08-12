@@ -469,7 +469,7 @@ html, body {
 .electro-mode::before,
 .electro-mode::after {
   content: '';
-  position: absolute;
+  position: fixed; /* Changed from absolute to fixed to avoid scroll interference */
   top: 0;
   left: 0;
   width: 100%;

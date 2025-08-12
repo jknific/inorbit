@@ -189,8 +189,19 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
   }, [])
 
   useEffect(() => {
+    // Early return if not ejected, but still provide cleanup
+    if (!isEjected) {
+      return () => {
+        // Cleanup function even when not ejected
+      }
+    }
+    
     const disk = diskRef.current
-    if (!disk || !isEjected) return
+    if (!disk) {
+      return () => {
+        // Cleanup function even when disk doesn't exist
+      }
+    }
 
     // Physics constants
     const FRICTION = 0.985 // Air resistance
@@ -203,7 +214,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
     const velocityHistory: Position[] = []
     let lastMouseTime = Date.now()
 
-    const handleMouseDown = (e: MouseEvent) => {
+    const handleMouseDown = (e: MouseEvent | Touch) => {
       // Since listener is on disk element, we know the click is on the disk
       isDraggingRef.current = true
       setIsGrabbing(true)
@@ -220,8 +231,10 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       velocityHistory.length = 0
       lastMouseTime = Date.now()
       
-      // Prevent text selection
-      e.preventDefault()
+      // Prevent text selection (only if it's a real MouseEvent with preventDefault)
+      if ('preventDefault' in e && typeof e.preventDefault === 'function') {
+        e.preventDefault()
+      }
     }
 
     const checkDropZone = (x: number, y: number) => {
@@ -367,18 +380,61 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
     // Start animation loop
     animate()
 
-    // Only mouse events - no touch events to preserve smooth scrolling
-    disk.addEventListener('mousedown', handleMouseDown)
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    // Wrapper functions to only handle events when dragging
+    function handleGlobalMouseMove(e: MouseEvent) {
+      if (isDraggingRef.current) {
+        handleMouseMove(e)
+      }
+    }
+    
+    function handleGlobalMouseUp(e: MouseEvent) {
+      if (isDraggingRef.current) {
+        handleMouseUp(e)
+      }
+    }
 
+    // Mouse events for desktop
+    disk.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleGlobalMouseMove, { passive: true })
+    document.addEventListener('mouseup', handleGlobalMouseUp, { passive: true })
+    
+    // Touch events for mobile VHS dragging
+    function handleTouchStart(e: TouchEvent) {
+      const touch = e.touches[0]
+      handleMouseDown(touch)
+    }
+    
+    function handleTouchMove(e: TouchEvent) {
+      // Only prevent default when actively dragging to preserve scroll
+      if (isDraggingRef.current) {
+        e.preventDefault()
+      }
+      const touch = e.touches[0]
+      handleMouseMove(touch as unknown as MouseEvent)
+    }
+    
+    function handleTouchEnd(e: TouchEvent) {
+      const touch = e.changedTouches[0]
+      handleMouseUp(touch as unknown as MouseEvent)
+    }
+    
+    // Add touch listeners for mobile
+    disk.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchmove', handleTouchMove, { passive: false })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
+    
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
       disk.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
+      document.removeEventListener('mousemove', handleGlobalMouseMove)
+      document.removeEventListener('mouseup', handleGlobalMouseUp)
+      
+      // Remove touch listeners
+      disk.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
     }
   }, [isEjected, handleReturnDisk, onDropZoneChange])
 
