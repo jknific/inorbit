@@ -204,35 +204,24 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
     let lastMouseTime = Date.now()
 
     const handleMouseDown = (e: MouseEvent) => {
-      const rect = disk.getBoundingClientRect()
-      const centerX = rect.left + rect.width / 2
-      const centerY = rect.top + rect.height / 2
+      // Since listener is on disk element, we know the click is on the disk
+      isDraggingRef.current = true
+      setIsGrabbing(true)
+      // Show insert icon when dragging starts
+      onDropZoneChange?.(true, false) // Show drop zone, not over
       
-      // Check if click is on the disk (circular hit area)
-      const distance = Math.sqrt(
-        Math.pow(e.clientX - centerX, 2) + 
-        Math.pow(e.clientY - centerY, 2)
-      )
-      
-      if (distance <= rect.width / 2) {
-        isDraggingRef.current = true
-        setIsGrabbing(true)
-        // Show insert icon when dragging starts
-        onDropZoneChange?.(true, false) // Show drop zone, not over
-        
-        dragStartRef.current = {
-          x: e.clientX - positionRef.current.x,
-          y: e.clientY - positionRef.current.y
-        }
-        
-        // Reset velocity when grabbing
-        velocityRef.current = { x: 0, y: 0 }
-        velocityHistory.length = 0
-        lastMouseTime = Date.now()
-        
-        // Prevent text selection
-        e.preventDefault()
+      dragStartRef.current = {
+        x: e.clientX - positionRef.current.x,
+        y: e.clientY - positionRef.current.y
       }
+      
+      // Reset velocity when grabbing
+      velocityRef.current = { x: 0, y: 0 }
+      velocityHistory.length = 0
+      lastMouseTime = Date.now()
+      
+      // Prevent text selection
+      e.preventDefault()
     }
 
     const checkDropZone = (x: number, y: number) => {
@@ -320,33 +309,6 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       }
     }
 
-    // Add touch support
-    const handleTouchStart = (e: TouchEvent) => {
-      // Only prevent scrolling when the VHS is ejected/floating
-      if (isEjected) {
-        e.preventDefault()
-      }
-      const touch = e.touches[0]
-      handleMouseDown(touch as unknown as MouseEvent)
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      // Only prevent scrolling when dragging the ejected VHS
-      if (isDraggingRef.current && isEjected) {
-        e.preventDefault()
-      }
-      const touch = e.touches[0]
-      handleMouseMove(touch as unknown as MouseEvent)
-    }
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      // Only prevent scrolling issues on touch end when VHS was ejected
-      if (isDraggingRef.current && isEjected) {
-        e.preventDefault()
-      }
-      const touch = e.changedTouches[0]
-      handleMouseUp(touch as unknown as MouseEvent)
-    }
 
     // Physics animation loop
     const animate = () => {
@@ -405,24 +367,18 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
     // Start animation loop
     animate()
 
-    // Add event listeners
-    document.addEventListener('mousedown', handleMouseDown)
+    // Only mouse events - no touch events to preserve smooth scrolling
+    disk.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
-    document.addEventListener('touchstart', handleTouchStart, { passive: false })
-    document.addEventListener('touchmove', handleTouchMove, { passive: false })
-    document.addEventListener('touchend', handleTouchEnd, { passive: false })
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
-      document.removeEventListener('mousedown', handleMouseDown)
+      disk.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
-      document.removeEventListener('touchstart', handleTouchStart)
-      document.removeEventListener('touchmove', handleTouchMove)
-      document.removeEventListener('touchend', handleTouchEnd)
     }
   }, [isEjected, handleReturnDisk, onDropZoneChange])
 
