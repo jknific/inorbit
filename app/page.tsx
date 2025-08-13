@@ -13,6 +13,8 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [showPlatforms, setShowPlatforms] = useState(false)
   const [typewriterComplete, setTypewriterComplete] = useState(false)
+  const [showSoundMessage, setShowSoundMessage] = useState(false)
+  const [soundMessageVisible, setSoundMessageVisible] = useState(false)
   const [expandedTrack, setExpandedTrack] = useState<number | null>(null)
   const [fusionMode, setFusionMode] = useState(false)
   const [showVibeButton, setShowVibeButton] = useState(false)
@@ -28,6 +30,8 @@ export default function Home() {
   const processedPianoRef = useRef<HTMLAudioElement>(null)
   const finalMixRef = useRef<HTMLAudioElement>(null)
   const floppyDiskRef = useRef<InteractiveFloppyDiskRef>(null)
+  const glitch1Ref = useRef<HTMLAudioElement>(null)
+  const glitch2Ref = useRef<HTMLAudioElement>(null)
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null)
   
   const title1 = 'IN_0RBIT'
@@ -122,14 +126,26 @@ export default function Home() {
       }, 150)
     } else if (displayedTitle2.length === title2.length) {
       setIsTyping2(false)
-      // Delay before showing rest of site
+      // Show sound message after title2 completes
       setTimeout(() => {
-        setTypewriterComplete(true)
-        // Show vibe button after rest of site appears
+        setShowSoundMessage(true)
         setTimeout(() => {
-          setShowVibeButton(true)
-        }, 1500)
-      }, 1000)
+          setSoundMessageVisible(true)
+        }, 100)
+        
+        // Hide sound message and show rest of site
+        setTimeout(() => {
+          setSoundMessageVisible(false)
+          setTimeout(() => {
+            setShowSoundMessage(false)
+            setTypewriterComplete(true)
+            // Show vibe button after rest of site appears
+            setTimeout(() => {
+              setShowVibeButton(true)
+            }, 1500)
+          }, 500) // Wait for fade out
+        }, 2000) // Show message for 2 seconds
+      }, 500) // Small delay after title2 completes
     }
     
     return () => clearTimeout(timeout)
@@ -262,6 +278,25 @@ export default function Home() {
     }
   }, [currentSlide, carouselMedia])
 
+  // Play glitch sounds for title clicks
+  const playGlitch1 = () => {
+    if (glitch1Ref.current) {
+      glitch1Ref.current.currentTime = 0
+      glitch1Ref.current.play().catch(() => {
+        // Ignore audio play errors
+      })
+    }
+  }
+
+  const playGlitch2 = () => {
+    if (glitch2Ref.current) {
+      glitch2Ref.current.currentTime = 0
+      glitch2Ref.current.play().catch(() => {
+        // Ignore audio play errors
+      })
+    }
+  }
+
   const getVibeClasses = () => {
     switch (currentVibe) {
       case 'electro': return 'electro-mode'
@@ -282,19 +317,38 @@ export default function Home() {
         <section className="max-w-4xl mx-auto mb-2">
           <div className="pl-2 sm:pl-4 md:pl-8">
             <h1 
-              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 break-words ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 break-words cursor-pointer hover:brightness-110 transition-all duration-200 ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle1}
+              onClick={playGlitch1}
+              title="Click to play glitch sound"
             >
               {mounted ? displayedTitle1 : ''}
             </h1>
             <h2 
-              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-2 break-words ${isTyping2 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-2 break-words cursor-pointer hover:brightness-110 transition-all duration-200 ${isTyping2 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle2}
+              onClick={playGlitch2}
+              title="Click to play glitch sound"
             >
               {mounted ? displayedTitle2 : ''}
             </h2>
           </div>
         </section>
+
+        {/* Sound message - appears after titles, disappears before rest of site */}
+        {showSoundMessage && (
+          <section className="max-w-4xl mx-auto mb-8">
+            <div className="pl-2 sm:pl-4 md:pl-8">
+              <p 
+                className={`text-lg sm:text-xl md:text-2xl font-light text-primary/80 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 ${
+                  soundMessageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                }`}
+              >
+                enjoy with sound on 🔊
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* Rest of site - only show after typewriter is complete */}
         {typewriterComplete && (
@@ -397,7 +451,6 @@ export default function Home() {
                         poster={carouselMedia[currentSlide].poster}
                         controls
                         autoPlay
-                        muted
                         playsInline
                         preload="metadata"
                         className={`w-full h-full object-cover cursor-pointer ${
@@ -505,7 +558,7 @@ export default function Home() {
                 <div>
                   <h3 className="font-semibold mb-2 text-primary">Credits</h3>
                   <ul className="text-sm space-y-1">
-                    <li><span className="text-accent-blue">Produced By:</span> <span className="text-secondary">John Knific & Joel Negus</span></li>
+                    <li><span className="text-accent-blue">Produced By:</span> <span className="text-secondary"><a href="https://www.linkedin.com/in/johnknific/" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors duration-200 underline underline-offset-2">John Knific</a> & <a href="https://www.clevelandscoring.com/" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors duration-200 underline underline-offset-2">Joel Negus</a></span></li>
                     <li>
                       <span className="text-accent-blue">Featuring:</span> 
                       <span className="text-secondary">
@@ -607,19 +660,21 @@ export default function Home() {
                   <div className="mb-4">
                     <div className="h-16 bg-black/60 rounded-lg flex items-center justify-center relative overflow-hidden">
                       {/* Waveform visualization placeholder */}
-                      <div className="flex space-x-1">
-                        {[8, 16, 24, 32, 20, 12, 28, 18, 36, 14, 26, 22, 30, 10, 34, 16, 28, 12, 24, 20].map((height, i) => (
-                          <div 
-                            key={`raw-${i}`} 
-                            className={`w-1 bg-accent-blue rounded-full ${currentlyPlaying === 'raw' ? 'animate-pulse' : ''}`}
-                            style={{
-                              height: `${height + 8}px`,
-                              animationDelay: `${i * 0.05}s`,
-                              opacity: currentlyPlaying === 'raw' ? 1 : 0.3,
-                              transition: 'opacity 0.3s ease'
-                            }}
-                          />
-                        ))}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex space-x-1">
+                          {[32, 28, 45, 38, 52, 24, 41, 35, 48, 29, 44, 39, 51, 26, 42, 36, 49, 31, 46, 33].map((height: number, i: number) => (
+                            <div 
+                              key={i} 
+                              className={`w-1 bg-blue-400/50 rounded-full ${currentlyPlaying === 'raw' ? 'animate-pulse' : ''}`}
+                              style={{
+                                height: `${height}px`,
+                                animationDelay: `${i * 0.05}s`,
+                                filter: 'blur(0.5px)',
+                                opacity: currentlyPlaying === 'raw' ? 1 : 0.2
+                              }}
+                            />
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -776,7 +831,7 @@ export default function Home() {
                   rel="noopener noreferrer" 
                   className="hover:text-accent-blue transition-colors duration-200 underline underline-offset-2"
                 >
-                  I build other things
+                  I also run a product studio
                 </a>
               </div>
             </div>
@@ -859,6 +914,20 @@ export default function Home() {
       ref={finalMixRef}
       src={assetPath("/audio/piano-track.mp3")}
       preload="metadata"
+      style={{ display: 'none' }}
+    />
+    
+    {/* Glitch Audio Elements */}
+    <audio 
+      ref={glitch1Ref}
+      src={assetPath("/audio/Glitch1.mp3")}
+      preload="auto"
+      style={{ display: 'none' }}
+    />
+    <audio 
+      ref={glitch2Ref}
+      src={assetPath("/audio/Glitch2.mp3")}
+      preload="auto"
       style={{ display: 'none' }}
     />
     </>

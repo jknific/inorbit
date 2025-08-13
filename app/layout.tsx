@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: 'In Orbit - John Knific',
     images: [
       {
-        url: '/images/album-covers/cover-text.png',
+        url: '/images/album-covers/cover-text.jpg',
         width: 1200,
         height: 1200,
         alt: 'In Orbit EP Album Cover by John Knific',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'In Orbit - John Knific | Blending Acoustic and Electronic',
     description: 'A 4-track EP blending jazz piano with electronic production. Stream now.',
-    images: ['/images/album-covers/cover-text.png'],
+    images: ['/images/album-covers/cover-text.jpg'],
   },
   robots: {
     index: true,

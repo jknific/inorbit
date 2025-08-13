@@ -32,6 +32,10 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
   const rewindSfxRef = useRef<HTMLAudioElement>(null)
   const pauseSfxRef = useRef<HTMLAudioElement>(null)
   const ejectSfxRef = useRef<HTMLAudioElement>(null)
+  const blip1Ref = useRef<HTMLAudioElement>(null)
+  const blip2Ref = useRef<HTMLAudioElement>(null)
+  const blip3Ref = useRef<HTMLAudioElement>(null)
+  const blip4Ref = useRef<HTMLAudioElement>(null)
   const animationRef = useRef<number | undefined>(undefined)
   const isDraggingRef = useRef(false)
   const dragStartRef = useRef<Position>({ x: 0, y: 0 })
@@ -42,6 +46,7 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
   const [isMobile, setIsMobile] = useState(false)
   const [isEjected, setIsEjected] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [showHandIcon, setShowHandIcon] = useState(false)
 
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
@@ -102,6 +107,15 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       // Show drop zone immediately when ejected
       onDropZoneChange?.(true, false)
       
+      // Show hand icon after a short delay, then hide it
+      setTimeout(() => {
+        setShowHandIcon(true)
+        // Hide hand icon after 3 seconds
+        setTimeout(() => {
+          setShowHandIcon(false)
+        }, 3000)
+      }, 500)
+      
       // Initialize position from static disk position
       const staticDisk = staticDiskRef.current
       if (staticDisk) {
@@ -119,6 +133,18 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
         }
         rotationRef.current = -3 // Start with slight rotation like in original
       }
+    }
+  }
+
+  const playRandomBlip = () => {
+    const blipRefs = [blip1Ref, blip2Ref, blip3Ref, blip4Ref]
+    const randomBlip = blipRefs[Math.floor(Math.random() * blipRefs.length)]
+    
+    if (randomBlip.current) {
+      randomBlip.current.currentTime = 0
+      randomBlip.current.play().catch(() => {
+        // Ignore audio play errors (e.g., if user hasn't interacted with page yet)
+      })
     }
   }
 
@@ -218,6 +244,8 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       // Since listener is on disk element, we know the click is on the disk
       isDraggingRef.current = true
       setIsGrabbing(true)
+      // Hide hand icon when user starts dragging
+      setShowHandIcon(false)
       // Show insert icon when dragging starts
       onDropZoneChange?.(true, false) // Show drop zone, not over
       
@@ -346,6 +374,9 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
             velocityRef.current.x *= -BOUNCE_DAMPING
             positionRef.current.x = positionRef.current.x <= minX ? minX : maxX
             
+            // Play random blip sound on bounce
+            playRandomBlip()
+            
             // Add some spin on bounce
             rotationRef.current += velocityRef.current.y * 2
           }
@@ -353,6 +384,9 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
           if (positionRef.current.y <= minY || positionRef.current.y >= maxY) {
             velocityRef.current.y *= -BOUNCE_DAMPING
             positionRef.current.y = positionRef.current.y <= minY ? minY : maxY
+            
+            // Play random blip sound on bounce
+            playRandomBlip()
             
             // Add some spin on bounce
             rotationRef.current += velocityRef.current.x * 2
@@ -610,6 +644,29 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
             } as React.CSSProperties}
             draggable={false}
           />
+          
+          {/* Hand Icon Overlay */}
+          {showHandIcon && (
+            <div 
+              className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-500 ${
+                showHandIcon ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+              }`}
+              style={{
+                animation: showHandIcon ? 'handPulse 2s ease-in-out infinite' : 'none'
+              }}
+            >
+              <div className="bg-white rounded-full p-2 shadow-lg">
+                <img 
+                  src={assetPath("/images/hand-pointer-regular-full.svg")} 
+                  alt="Drag cursor" 
+                  className="w-6 h-6 md:w-8 md:h-8"
+                  style={{
+                    imageRendering: 'pixelated'
+                  } as React.CSSProperties}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -635,6 +692,30 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
       <audio 
         ref={ejectSfxRef}
         src={assetPath("/audio/eject.mp3")}
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={blip1Ref}
+        src={assetPath("/audio/blip1.mp3")}
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={blip2Ref}
+        src={assetPath("/audio/blip2.mp3")}
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={blip3Ref}
+        src={assetPath("/audio/blip3.mp3")}
+        preload="auto"
+        style={{ display: 'none' }}
+      />
+      <audio 
+        ref={blip4Ref}
+        src={assetPath("/audio/blip4.mp3")}
         preload="auto"
         style={{ display: 'none' }}
       />

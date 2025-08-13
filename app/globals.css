@@ -1225,3 +1225,108 @@ html, body {
 .wiggle-animation {
   animation: dropZoneWiggle 1s ease-in-out;
 }
+
+@keyframes handPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.pixelated-hand-cursor {
+  width: 32px;
+  height: 32px;
+  background-image: 
+    /* Thumb */
+    radial-gradient(circle at 8px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 10px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 12px 16px, #000 2px, transparent 2px),
+    
+    /* Index finger */
+    radial-gradient(circle at 16px 4px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 6px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 8px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 10px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 12px, #000 2px, transparent 2px),
+    
+    /* Middle finger */
+    radial-gradient(circle at 20px 2px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 4px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 6px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 8px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 10px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 12px, #000 2px, transparent 2px),
+    
+    /* Ring finger */
+    radial-gradient(circle at 24px 4px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 6px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 8px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 10px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 12px, #000 2px, transparent 2px),
+    
+    /* Pinky */
+    radial-gradient(circle at 28px 6px, #000 2px, transparent 2px),
+    radial-gradient(circle at 28px 8px, #000 2px, transparent 2px),
+    radial-gradient(circle at 28px 10px, #000 2px, transparent 2px),
+    radial-gradient(circle at 28px 12px, #000 2px, transparent 2px),
+    
+    /* Palm */
+    radial-gradient(circle at 14px 14px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 14px, #000 2px, transparent 2px),
+    radial-gradient(circle at 18px 14px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 14px, #000 2px, transparent 2px),
+    radial-gradient(circle at 22px 14px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 14px, #000 2px, transparent 2px),
+    radial-gradient(circle at 26px 14px, #000 2px, transparent 2px),
+    
+    radial-gradient(circle at 12px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 14px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 18px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 22px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 16px, #000 2px, transparent 2px),
+    radial-gradient(circle at 26px 16px, #000 2px, transparent 2px),
+    
+    radial-gradient(circle at 12px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 14px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 18px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 22px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 18px, #000 2px, transparent 2px),
+    radial-gradient(circle at 26px 18px, #000 2px, transparent 2px),
+    
+    radial-gradient(circle at 12px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 14px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 18px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 22px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 20px, #000 2px, transparent 2px),
+    radial-gradient(circle at 26px 20px, #000 2px, transparent 2px),
+    
+    /* Wrist */
+    radial-gradient(circle at 14px 22px, #000 2px, transparent 2px),
+    radial-gradient(circle at 16px 22px, #000 2px, transparent 2px),
+    radial-gradient(circle at 18px 22px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 22px, #000 2px, transparent 2px),
+    radial-gradient(circle at 22px 22px, #000 2px, transparent 2px),
+    radial-gradient(circle at 24px 22px, #000 2px, transparent 2px),
+    
+    radial-gradient(circle at 16px 24px, #000 2px, transparent 2px),
+    radial-gradient(circle at 18px 24px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 24px, #000 2px, transparent 2px),
+    radial-gradient(circle at 22px 24px, #000 2px, transparent 2px),
+    
+    radial-gradient(circle at 18px 26px, #000 2px, transparent 2px),
+    radial-gradient(circle at 20px 26px, #000 2px, transparent 2px);
+  
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
