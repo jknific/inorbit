@@ -920,13 +920,13 @@ export default function Home() {
     {/* Glitch Audio Elements */}
     <audio 
       ref={glitch1Ref}
-      src={assetPath("/audio/Glitch1.mp3")}
+      src={assetPath("/audio/glitch1.mp3")}
       preload="auto"
       style={{ display: 'none' }}
     />
     <audio 
       ref={glitch2Ref}
-      src={assetPath("/audio/Glitch2.mp3")}
+      src={assetPath("/audio/glitch2.mp3")}
       preload="auto"
       style={{ display: 'none' }}
     />
