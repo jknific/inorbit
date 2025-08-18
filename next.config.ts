@@ -4,8 +4,8 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: isProd ? '/inorbit' : '',
-  assetPrefix: isProd ? '/inorbit' : '',
+  basePath: '',
+  assetPrefix: '',
   experimental: {
     optimizePackageImports: ['clsx', 'tailwind-merge']
   },
