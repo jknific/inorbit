@@ -4,9 +4,8 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const nextConfig: NextConfig = {
   output: 'export',
-  // No basePath or assetPrefix needed for custom domain
-  basePath: '',
-  assetPrefix: '',
+  basePath: isProd ? '/inorbit' : '',
+  assetPrefix: isProd ? '/inorbit' : '',
   experimental: {
     optimizePackageImports: ['clsx', 'tailwind-merge']
   },
