@@ -315,7 +315,7 @@ export default function Home() {
         
         {/* Album Title */}
         <section className="max-w-4xl mx-auto mb-2">
-          <div className="pl-2 sm:pl-4 md:pl-8">
+          <div className="pl-6 sm:pl-6 md:pl-8">
             <h1 
               className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-shadow-glow vibe-title-1 break-words cursor-pointer hover:brightness-110 transition-all duration-200 ${isTyping1 ? 'typewriter' : 'typewriter-complete'} ${typewriterComplete ? 'crt-title' : ''}`}
               data-text={displayedTitle1}
@@ -338,7 +338,7 @@ export default function Home() {
         {/* Sound message - appears after titles, disappears before rest of site */}
         {showSoundMessage && (
           <section className="max-w-4xl mx-auto mb-8">
-            <div className="pl-2 sm:pl-4 md:pl-8">
+            <div className="pl-6 sm:pl-6 md:pl-8">
               <p 
                 className={`text-lg sm:text-xl md:text-2xl font-light text-primary/80 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 ${
                   soundMessageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
@@ -356,7 +356,7 @@ export default function Home() {
             {/* Hero Section */}
             <section className="mb-24 animate-fade-in">
           <div className="max-w-4xl mx-auto">
-            <div className="pl-2 sm:pl-4 md:pl-8">
+            <div className="pl-6 sm:pl-6 md:pl-8">
               <p className="text-xl md:text-2xl leading-relaxed mb-12 text-secondary">
                 BLENDING ACOUSTIC AND ELECTRONIC MUSIC
               </p>
