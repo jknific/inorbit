@@ -13,6 +13,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [showPlatforms, setShowPlatforms] = useState(false)
   const [typewriterComplete, setTypewriterComplete] = useState(false)
+  const [contentVisible, setContentVisible] = useState(false)
   const [showSoundMessage, setShowSoundMessage] = useState(false)
   const [soundMessageVisible, setSoundMessageVisible] = useState(false)
   const [expandedTrack, setExpandedTrack] = useState<number | null>(null)
@@ -139,10 +140,14 @@ export default function Home() {
           setTimeout(() => {
             setShowSoundMessage(false)
             setTypewriterComplete(true)
-            // Show vibe button after rest of site appears
+            // Small delay to ensure CSS is loaded before showing content
             setTimeout(() => {
-              setShowVibeButton(true)
-            }, 1500)
+              setContentVisible(true)
+              // Show vibe button after rest of site appears
+              setTimeout(() => {
+                setShowVibeButton(true)
+              }, 1500)
+            }, 50)
           }, 500) // Wait for fade out
         }, 2000) // Show message for 2 seconds
       }, 500) // Small delay after title2 completes
@@ -193,6 +198,10 @@ export default function Home() {
       setIsTyping1(false)
       setIsTyping2(false)
       setTypewriterComplete(true)
+      // Small delay before showing content to prevent flash
+      setTimeout(() => {
+        setContentVisible(true)
+      }, 50)
     }
   }
 
@@ -352,9 +361,9 @@ export default function Home() {
 
         {/* Rest of site - only show after typewriter is complete */}
         {typewriterComplete && (
-          <>
+          <div style={{ visibility: contentVisible ? 'visible' : 'hidden' }}>
             {/* Hero Section */}
-            <section className="mb-24 animate-fade-in">
+            <section className="mb-24 animate-fade-in" style={{ opacity: contentVisible ? undefined : 0 }}>
           <div className="max-w-4xl mx-auto">
             <div className="pl-6 sm:pl-6 md:pl-8">
               <p className="text-xl md:text-2xl leading-relaxed mb-12 text-secondary">
@@ -576,7 +585,7 @@ export default function Home() {
         </section>
 
         {/* Track Listings */}
-        <section className="max-w-4xl mx-auto mb-16 animate-slide-up">
+        <section className="max-w-4xl mx-auto mb-16 animate-slide-up" style={{ opacity: contentVisible ? undefined : 0 }}>
           <div className="glass-effect vibe-glass rounded-xl p-8">
             <h2 className="text-3xl font-bold mb-8 text-center text-primary">Track Details</h2>
             <div className="space-y-4">
@@ -620,7 +629,7 @@ export default function Home() {
         </section>
 
         {/* Sound Design */}
-        <section className="max-w-4xl mx-auto mb-16 animate-slide-up">
+        <section className="max-w-4xl mx-auto mb-16 animate-slide-up" style={{ opacity: contentVisible ? undefined : 0 }}>
           <div className="glass-effect vibe-glass rounded-xl p-8">
             <h2 className="text-3xl font-bold mb-6 text-center text-primary">Sound Design</h2>
             
@@ -837,7 +846,7 @@ export default function Home() {
             </div>
           </div>
         </footer>
-          </>
+            </div>
         )}
       </div>
       
