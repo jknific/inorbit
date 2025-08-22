@@ -830,7 +830,18 @@ export default function Home() {
                 >
                   Contact Me
                 </a>
-                <span className="text-xs">© 2025 Knerd Creative LLC. All rights reserved.</span>
+                <div className="flex flex-col space-y-1">
+                  <span className="text-xs">© 2025 Knerd Creative LLC. All rights reserved.</span>
+                  <span className="text-xs">
+                    <span className="text-accent-blue">Management:</span>{' '}
+                    <a 
+                      href="mailto:mmoore@theairloomcompany.com"
+                      className="hover:text-accent-blue transition-colors duration-200 underline underline-offset-2"
+                    >
+                      mmoore@theairloomcompany.com
+                    </a>
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col items-center md:items-end space-y-1">
                 <span className="hover:text-accent-blue transition-colors duration-200">Like the site?</span>
