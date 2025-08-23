@@ -901,7 +901,7 @@ export default function Home() {
     {/* Drop Zone - Rendered at top level to ensure proper fixed positioning */}
     {showDropZone && (
       <button 
-        className={`fixed top-5 right-5 w-15 h-15 rounded-full flex items-center justify-center transition-all duration-200 z-[100] backdrop-blur-sm text-2xl cursor-pointer hover:scale-105 ${
+        className={`fixed top-5 right-5 w-15 h-15 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm text-2xl cursor-pointer hover:scale-105 ${
           isOverDropZone 
             ? 'bg-blue-500/60 border-2 border-blue-400/80 shadow-lg shadow-blue-500/30 scale-110' 
             : dropZoneFirstGrab
@@ -911,7 +911,8 @@ export default function Home() {
         style={{ 
           width: '60px', 
           height: '60px',
-          filter: dropZoneFirstGrab ? 'brightness(1.3)' : 'brightness(1)'
+          filter: dropZoneFirstGrab ? 'brightness(1.3)' : 'brightness(1)',
+          zIndex: 100001
         }}
         onClick={() => {
           // Insert the disk using the ref method (includes sound effect)

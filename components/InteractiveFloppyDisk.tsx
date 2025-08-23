@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+import { createPortal } from 'react-dom'
 import { assetPath } from '@/lib/utils'
 
 interface Position {
@@ -615,14 +616,15 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
         </div>
       )}
 
-      {/* Interactive Floppy Disk (only visible when ejected) */}
-      {isEjected && (
+      {/* Interactive Floppy Disk (only visible when ejected) - Rendered as portal */}
+      {isEjected && typeof window !== 'undefined' && createPortal(
         <div 
           ref={diskRef}
-          className={`fixed z-10 ${isGrabbing ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`fixed ${isGrabbing ? 'cursor-grabbing' : 'cursor-grab'}`}
           style={{
             width: isMobile ? '200px' : '300px', // Smaller on mobile
             height: isMobile ? '200px' : '300px',
+            zIndex: 100000, // Highest z-index to appear above everything
             transition: 'none',
             userSelect: 'none',
             pointerEvents: 'auto',
@@ -667,7 +669,8 @@ const InteractiveFloppyDisk = forwardRef<InteractiveFloppyDiskRef, InteractiveFl
               </div>
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Hidden Audio Elements */}
