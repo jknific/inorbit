@@ -497,7 +497,6 @@ export default function Home() {
                         poster={carouselMedia[currentSlide].poster}
                         controls
                         playsInline
-                        muted
                         preload="metadata"
                         className={`w-full h-full object-cover ${
                           carouselMedia[currentSlide].src.includes('6.mp4') ? 'object-top' : 
