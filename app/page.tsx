@@ -393,7 +393,7 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-wrap justify-center gap-4 mb-4">
               <a 
-                href="https://music.apple.com/us/album/in-orbit-ep/1793599577" 
+                href="https://music.apple.com/us/album/in-orbit-ep/1835050642" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="btn-streaming inline-block" 
@@ -501,11 +501,6 @@ export default function Home() {
                     
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
-                    
-                    {/* Media Type Indicator */}
-                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 text-xs text-white">
-                      {carouselMedia[currentSlide].type === 'video' ? '🎬' : '📸'}
-                    </div>
                   </div>
                   
                   {/* Navigation Arrows */}
