@@ -12,6 +12,7 @@ export default function Home() {
   const [isTyping2, setIsTyping2] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [showPlatforms, setShowPlatforms] = useState(false)
+  const platformButtonRef = useRef<HTMLButtonElement>(null)
   const [typewriterComplete, setTypewriterComplete] = useState(false)
   const [contentVisible, setContentVisible] = useState(false)
   const [showSoundMessage, setShowSoundMessage] = useState(false)
@@ -282,7 +283,9 @@ export default function Home() {
     if (carouselMedia[currentSlide].type === 'video' && videoRef.current) {
       // Small delay to ensure video is loaded
       setTimeout(() => {
-        videoRef.current?.play()
+        videoRef.current?.play().catch(() => {
+          // Silently catch autoplay errors (common on mobile)
+        })
       }, 100)
     }
   }, [currentSlide, carouselMedia])
@@ -318,7 +321,7 @@ export default function Home() {
     <>
     <main className={`min-h-screen bg-primary vibe-mode ${getVibeClasses()}`}>
       {fusionMode && <JazzModeBackground />}
-      <div className="container mx-auto px-2 sm:px-4 pb-16 relative overflow-hidden" style={{ paddingTop: '6rem', zIndex: 1 }}>
+      <div className="container mx-auto px-2 sm:px-4 pb-16 relative" style={{ paddingTop: '6rem', zIndex: 1 }}>
         {/* Top Spacer */}
         <div style={{ height: '3rem' }}></div>
         
@@ -383,20 +386,33 @@ export default function Home() {
           
 
           {/* CTA Section */}
-          <div className="text-center relative mt-16">
+          <div className="text-center relative mt-16" style={{ zIndex: 50 }}>
             {/* Listen Now Header */}
             <h3 className="text-2xl font-bold mb-6 text-primary">Listen Now</h3>
             
             {/* CTA Buttons */}
             <div className="flex flex-wrap justify-center gap-4 mb-4">
-              <button className="btn-streaming" data-text="🍎 Apple Music">
+              <a 
+                href="https://music.apple.com/us/album/in-orbit-ep/1793599577" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn-streaming inline-block" 
+                data-text="🍎 Apple Music"
+              >
                 🍎 Apple Music
-              </button>
-              <button className="btn-streaming" data-text="🎧 Spotify">
+              </a>
+              <a 
+                href="https://open.spotify.com/album/5Wnr1xRANUnS0vhC5RSfU7?si=13kNdGE8So2q9N1O7hgxvg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn-streaming inline-block" 
+                data-text="🎧 Spotify"
+              >
                 🎧 Spotify
-              </button>
+              </a>
               <div className="relative">
                 <button 
+                  ref={platformButtonRef}
                   className="btn-secondary"
                   onClick={() => setShowPlatforms(!showPlatforms)}
                 >
@@ -407,12 +423,22 @@ export default function Home() {
                 {showPlatforms && (
                   <div className="platforms-popover absolute top-full left-0 mt-2 w-64 glass-effect rounded-xl p-4 z-10 shadow-lg">
                 <div className="grid grid-cols-1 gap-2">
-                  <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
+                  <a 
+                    href="https://music.youtube.com/watch?v=5cBwUxa74OE&si=0mKPPJYMcfCPduJU" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+                  >
                     🎵 YouTube Music
-                  </button>
-                  <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
+                  </a>
+                  <a 
+                    href="https://music.amazon.com/albums/B0FNBDHQL2?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_XnTlDkKzWibQloLIziiQyB952" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+                  >
                     🎧 Amazon Music
-                  </button>
+                  </a>
                   <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
                     📀 Bandcamp
                   </button>
@@ -459,23 +485,15 @@ export default function Home() {
                         src={carouselMedia[currentSlide].src}
                         poster={carouselMedia[currentSlide].poster}
                         controls
-                        autoPlay
                         playsInline
+                        muted
                         preload="metadata"
-                        className={`w-full h-full object-cover cursor-pointer ${
+                        className={`w-full h-full object-cover ${
                           carouselMedia[currentSlide].src.includes('6.mp4') ? 'object-top' : 
                           carouselMedia[currentSlide].src.includes('7.mp4') ? 'object-bottom' : 
                           'object-center'
                         }`}
                         style={{ filter: 'grayscale(0.3)' }}
-                        onClick={(e) => {
-                          const video = e.currentTarget
-                          if (video.paused) {
-                            video.play()
-                          } else {
-                            video.pause()
-                          }
-                        }}
                       >
                         Your browser does not support the video tag.
                       </video>
@@ -950,6 +968,59 @@ export default function Home() {
       preload="auto"
       style={{ display: 'none' }}
     />
+    
+    {/* Platforms Dropdown Portal - Renders outside main container to avoid clipping */}
+    {showPlatforms && platformButtonRef.current && (
+      <div 
+        className="platforms-popover fixed glass-effect rounded-xl p-4 shadow-2xl"
+        style={{
+          top: platformButtonRef.current.getBoundingClientRect().bottom + 8,
+          left: platformButtonRef.current.getBoundingClientRect().left,
+          zIndex: 99999,
+          width: '16rem'
+        }}
+      >
+        <div className="grid grid-cols-1 gap-2">
+          <a 
+            href="https://music.amazon.com/albums/B0FNBDHQL2?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_XnTlDkKzWibQloLIziiQyB952" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+            onClick={() => setShowPlatforms(false)}
+          >
+            <span className="inline-flex items-center">
+              <span className="mr-2">🟠</span>
+              Amazon Music
+            </span>
+          </a>
+          <a 
+            href="https://music.youtube.com/watch?v=5cBwUxa74OE&si=0mKPPJYMcfCPduJU" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+            onClick={() => setShowPlatforms(false)}
+          >
+            <span className="inline-flex items-center">
+              <span className="mr-2">▶️</span>
+              YouTube Music
+            </span>
+          </a>
+          <a 
+            href="https://open.qobuz.com/album/nodco4v3ybdvc" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+            onClick={() => setShowPlatforms(false)}
+          >
+            <span className="inline-flex items-center">
+              <span className="mr-2">💿</span>
+              Qobuz
+            </span>
+          </a>
+        </div>
+      </div>
+    )}
+    
     </>
   )
 }
