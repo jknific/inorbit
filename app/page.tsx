@@ -433,36 +433,44 @@ export default function Home() {
                 {/* Platforms Popover */}
                 {showPlatforms && (
                   <div className="platforms-popover absolute top-full left-0 mt-2 w-64 glass-effect rounded-xl p-4 z-10 shadow-lg">
-                <div className="grid grid-cols-1 gap-2">
-                  <a 
-                    href="https://music.youtube.com/watch?v=5cBwUxa74OE&si=0mKPPJYMcfCPduJU" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
-                  >
-                    🎵 YouTube Music
-                  </a>
-                  <a 
-                    href="https://music.amazon.com/albums/B0FNBDHQL2?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_XnTlDkKzWibQloLIziiQyB952" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
-                  >
-                    🎧 Amazon Music
-                  </a>
-                  <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
-                    📀 Bandcamp
-                  </button>
-                  <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
-                    🎼 SoundCloud
-                  </button>
-                  <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
-                    🎹 Tidal
-                  </button>
-                  <button className="text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary">
-                    📻 Deezer
-                  </button>
-                </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      <a 
+                        href="https://music.amazon.com/albums/B0FNBDHQL2?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_XnTlDkKzWibQloLIziiQyB952" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+                        onClick={() => setShowPlatforms(false)}
+                      >
+                        <span className="inline-flex items-center">
+                          <span className="mr-2">🟠</span>
+                          Amazon Music
+                        </span>
+                      </a>
+                      <a 
+                        href="https://music.youtube.com/watch?v=5cBwUxa74OE&si=0mKPPJYMcfCPduJU" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+                        onClick={() => setShowPlatforms(false)}
+                      >
+                        <span className="inline-flex items-center">
+                          <span className="mr-2">▶️</span>
+                          YouTube Music
+                        </span>
+                      </a>
+                      <a 
+                        href="https://open.qobuz.com/album/nodco4v3ybdvc" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
+                        onClick={() => setShowPlatforms(false)}
+                      >
+                        <span className="inline-flex items-center">
+                          <span className="mr-2">💿</span>
+                          Qobuz
+                        </span>
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>
@@ -975,57 +983,6 @@ export default function Home() {
       style={{ display: 'none' }}
     />
     
-    {/* Platforms Dropdown Portal - Renders outside main container to avoid clipping */}
-    {showPlatforms && platformButtonRef.current && (
-      <div 
-        className="platforms-popover fixed glass-effect rounded-xl p-4 shadow-2xl"
-        style={{
-          top: platformButtonRef.current.getBoundingClientRect().bottom + 8,
-          left: platformButtonRef.current.getBoundingClientRect().left,
-          zIndex: 99999,
-          width: '16rem'
-        }}
-      >
-        <div className="grid grid-cols-1 gap-2">
-          <a 
-            href="https://music.amazon.com/albums/B0FNBDHQL2?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_XnTlDkKzWibQloLIziiQyB952" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
-            onClick={() => setShowPlatforms(false)}
-          >
-            <span className="inline-flex items-center">
-              <span className="mr-2">🟠</span>
-              Amazon Music
-            </span>
-          </a>
-          <a 
-            href="https://music.youtube.com/watch?v=5cBwUxa74OE&si=0mKPPJYMcfCPduJU" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
-            onClick={() => setShowPlatforms(false)}
-          >
-            <span className="inline-flex items-center">
-              <span className="mr-2">▶️</span>
-              YouTube Music
-            </span>
-          </a>
-          <a 
-            href="https://open.qobuz.com/album/nodco4v3ybdvc" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="block text-left p-3 rounded-lg hover:bg-white/10 transition-colors text-primary"
-            onClick={() => setShowPlatforms(false)}
-          >
-            <span className="inline-flex items-center">
-              <span className="mr-2">💿</span>
-              Qobuz
-            </span>
-          </a>
-        </div>
-      </div>
-    )}
     
     </>
   )
