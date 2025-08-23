@@ -88,6 +88,17 @@ export default function Home() {
     setDisplayedTitle1('') // Start with empty for typewriter
     setDisplayedTitle2('') // Start with empty for typewriter  
     
+    // Preload critical images to prevent flicker
+    const imagesToPreload = [
+      assetPath('/images/carousel/1.jpeg'), // First carousel image
+      assetPath('/images/effect-pedals-bw.jpeg'), // Effects pedals image
+    ]
+    
+    imagesToPreload.forEach(src => {
+      const img = new Image()
+      img.src = src
+    })
+    
     const startTyping = setTimeout(() => {
       setIsTyping1(true)
     }, 100)
@@ -364,9 +375,9 @@ export default function Home() {
 
         {/* Rest of site - only show after typewriter is complete */}
         {typewriterComplete && (
-          <div style={{ visibility: contentVisible ? 'visible' : 'hidden' }}>
+          <div className={contentVisible ? 'animate-fade-in' : ''} style={{ opacity: contentVisible ? 1 : 0 }}>
             {/* Hero Section */}
-            <section className="mb-24 animate-fade-in" style={{ opacity: contentVisible ? undefined : 0 }}>
+            <section className="mb-24">
           <div className="max-w-4xl mx-auto">
             <div className="pl-6 sm:pl-6 md:pl-8">
               <p className="text-xl md:text-2xl leading-relaxed mb-12 text-secondary">
@@ -598,7 +609,7 @@ export default function Home() {
         </section>
 
         {/* Track Listings */}
-        <section className="max-w-4xl mx-auto mb-16 animate-slide-up" style={{ opacity: contentVisible ? undefined : 0 }}>
+        <section className="max-w-4xl mx-auto mb-16">
           <div className="glass-effect vibe-glass rounded-xl p-8">
             <h2 className="text-3xl font-bold mb-8 text-center text-primary">Track Details</h2>
             <div className="space-y-4">
@@ -642,7 +653,7 @@ export default function Home() {
         </section>
 
         {/* Sound Design */}
-        <section className="max-w-4xl mx-auto mb-16 animate-slide-up" style={{ opacity: contentVisible ? undefined : 0 }}>
+        <section className="max-w-4xl mx-auto mb-16">
           <div className="glass-effect vibe-glass rounded-xl p-8">
             <h2 className="text-3xl font-bold mb-6 text-center text-primary">Sound Design</h2>
             
